@@ -30,4 +30,8 @@ defmodule Koueki.User do
       {:error, changeset}
     end
   end
+
+  def verify_password(%User{} = user, password) do
+    Pbkdf2.verify_pass(password, user.password_hash)
+  end
 end

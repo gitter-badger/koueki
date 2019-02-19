@@ -13,14 +13,34 @@ defmodule KouekiWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :authenticated_api do
+    plug :accepts, ["json"]
+    plug KouekiWeb.Plugs.SessionCookiePlug
+    plug KouekiWeb.Plugs.APIKeyPlug
+    plug KouekiWeb.Plugs.EnsureAuthenticatedPlug
+  end
+
   scope "/", KouekiWeb do
     pipe_through :browser
-
     get "/", PageController, :index
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", KouekiWeb do
-  #   pipe_through :api
-  # end
+
+  scope "/auth", KouekiWeb do
+    pipe_through :api        
+    
+    post "/login", SessionController, :login
+  end
+
+  scope "/events", KouekiWeb do
+    pipe_through :authenticated_api
+
+    get "/", EventsController, :test
+  end
+
+  # Fallback
+  scope "/", KouekiWeb do
+    pipe_through :browser
+    get "/*path", PageController, :index
+  end
 end

@@ -1,20 +1,26 @@
 <!DOCTYPE HTML>
 <html lang="en">
     <head>
-        <title>Koueki</title>
+        <title>MISP</title>
 
         <meta charset="utf-8">
-        <meta property="og:title" content="Koueki" />
-        <meta property="og:site_name" content="Koueki" />
+        <meta property="og:title" content="MISP" />
+        <meta property="og:site_name" content="MISP" />
         <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://misp.software/favicon.ico" />
+        <meta property="og:description" content="An alternative frontend for MISP" />
         <meta property="og:locale" content="en">
 
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#FFFFF" />
 
-        <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/vendor.css") %>" />
-        <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/main.css") %>" />
+        <link rel="stylesheet" href="<%=htmlWebpackPlugin.files.chunks.vendor.css %>" />
+        <link rel="stylesheet" href="<%=htmlWebpackPlugin.files.chunks.main.css %>" />
+
+        <link rel="icon" href="https://misp.software/favicon.ico" type="image/png"/>
+        <link rel="shortcut icon" href="https://misp.software/favicon.ico" type="image/png"/>
     </head>
+
     <body>
         <div id="root"></div>
 
@@ -24,9 +30,9 @@
                       "There is no certainty that all features will work on IE. ");
             }
         </script>
-
-        <script src="<%= Routes.static_path(@conn, "/vendor.js") %>" defer></script>
-        <script src="<%= Routes.static_path(@conn, "/main.js") %>" defer></script>
+ 
+        <script src="<%=htmlWebpackPlugin.files.chunks.vendor.entry %>" defer></script>
+        <script src="<%=htmlWebpackPlugin.files.chunks.main.entry %>" defer></script>
 
         <noscript>
             <h3>We need Javascript for any of this to even vaguely work. Enable it.</h3>
@@ -37,3 +43,4 @@
         </noscript>
     </body>
 </html>
+
