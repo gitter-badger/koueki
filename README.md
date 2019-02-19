@@ -2,7 +2,7 @@
 
 *公益, the public good*
 
-Good security comes with transparancy.
+Good security comes with transparency.
 
 ## What is it?
 
@@ -31,9 +31,9 @@ the spaghetti logic demanded by such a high set of restrictions.
 
 The MISP format is currently the nicest threat sharing format
 in active use - the only viable alternative is STIX, which
-I've spent enough time with to believe is not worth persuing.
+I've spent enough time with to believe is not worth pursuing.
 Additionally the adoption of MISP is high enough to be the
-de-facto indicator sharing system in europe. Hence I want
+de-facto indicator sharing system in Europe. Hence I want
 to use that as a base to work from - by remaining compatible
 with PyMISP pre-existing tools can be ported with nothing more
 than a URL switch.
