@@ -2,7 +2,7 @@
 
 *公益, the public good*
 
-Good security comes with transparency.
+Good security comes with transparency, not walled gardens and paywalls.
 
 ## What is it?
 
@@ -17,6 +17,8 @@ those that restrict sharing or visibility. Other features,
 such as the `analysis` attribute of events should be used
 to inform others of if they should act on an attribute alone.
 
+Koueki will provide a consistent API alongside a MISP-compatible
+"legacy" API.
 
 ## Motivation
 
