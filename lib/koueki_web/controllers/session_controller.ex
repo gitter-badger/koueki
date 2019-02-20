@@ -32,4 +32,11 @@ defmodule KouekiWeb.SessionController do
     |> put_status(400)
     |> json(%{error: "Both email and password are required to log in!"})
   end  
+
+  def logout(conn, _) do
+    conn
+    |> fetch_session()
+    |> clear_session()
+    |> json(%{ok: true})
+  end
 end

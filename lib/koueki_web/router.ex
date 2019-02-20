@@ -30,6 +30,7 @@ defmodule KouekiWeb.Router do
     pipe_through :api        
     
     post "/login", SessionController, :login
+    post "/logout", SessionController, :logout
   end
 
   scope "/events", KouekiWeb do

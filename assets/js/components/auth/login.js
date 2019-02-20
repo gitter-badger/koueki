@@ -2,8 +2,10 @@ import React from "react";
 import { Form } from "semantic-ui-react";
 import { connect } from "react-redux";
 import { post } from "utils";
+import { setLoginStatus } from "actions/config";
+import { toast } from "react-toastify";
 
-export default class LoginForm extends React.PureComponent {
+class LoginForm extends React.PureComponent {
   state = { email: "", password: "" }
 
   onChange = (e, {name, value}) => this.setState({[name]: value})
@@ -14,9 +16,15 @@ export default class LoginForm extends React.PureComponent {
       password: this.state.password
     }
 
-    let response = await post("/api/login", postBody);
+    let response = await post("/auth/login", postBody);
     let json = response.json();
-    console.log(json);
+    if (json.error) {
+      toast.error(json.error);
+      this.props.setLoginStatus(false);
+    } else {
+      toast.success("Logged in");
+      this.props.setLoginStatus(true);
+    }
   }
 
   render() {
@@ -44,3 +52,9 @@ export default class LoginForm extends React.PureComponent {
     );
   }
 }
+
+const mapDispatchToProps = ({
+  setLoginStatus
+});
+
+export default connect(null, mapDispatchToProps)(LoginForm);

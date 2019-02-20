@@ -5,6 +5,7 @@ import { NavLink } from "react-router-dom";
 import { withRouter } from "react-router";
 import { connect } from "react-redux";
 import ConfigChanger from "config/index";
+import RequireLoginStatus from "require-login-status";
 
 class NavBar extends React.Component {
     render() {
@@ -32,7 +33,14 @@ class NavBar extends React.Component {
                     ))}
                 </Menu.Menu>
                 <Menu.Menu position="right">
-                    <ConfigChanger />
+                  <Menu.Item>
+                    <RequireLoginStatus status={false}>
+                      <NavLink to="/login">Login</NavLink>  
+                    </RequireLoginStatus>
+                    <RequireLoginStatus status={true}>
+                      <NavLink to="/logout">Logout</NavLink>  
+                    </RequireLoginStatus>
+                  </Menu.Item>
                 </Menu.Menu>
             </Menu>
         );

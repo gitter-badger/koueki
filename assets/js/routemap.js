@@ -9,7 +9,8 @@ const load_options = { LoadingComponent: () => <Placeholder /> };
 
 const routes = [
     { path: "/", component: () => import("home/index") },
-    { path: "/login", component: () => import("login/index") },
+    { path: "/login", component: () => import("auth/login") },
+    { path: "/logout", component: () => import("auth/logout") },
     { path: "/attributes", component: () => import("attributes/index") },
     { path: "/events", component: () => import("events/index") },
     { path: "/events/:id", component: () => import("events/view") }
