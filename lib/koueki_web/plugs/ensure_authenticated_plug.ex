@@ -18,4 +18,3 @@ defmodule KouekiWeb.Plugs.EnsureAuthenticatedPlug do
     |> halt
   end
 end
-

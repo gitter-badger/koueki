@@ -13,7 +13,7 @@ defmodule Koueki.User do
   end
 
   def create(params) do
-    changeset = 
+    changeset =
       %User{}
       |> cast(params, [:email, :password])
       |> validate_required([:email, :password])

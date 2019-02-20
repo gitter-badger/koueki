@@ -4,7 +4,7 @@ defmodule Koueki.Org do
   import Ecto.Changeset
 
   schema "orgs" do
-    field :uuid, :binary_id
+    field :uuid, Ecto.UUID, autogenerate: true
     field :name, :string
   end
 end

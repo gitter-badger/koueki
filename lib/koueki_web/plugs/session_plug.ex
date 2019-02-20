@@ -11,7 +11,7 @@ defmodule KouekiWeb.Plugs.SessionCookiePlug do
   end
 
   def call(conn, _) do
-    user_id = 
+    user_id =
       conn
       |> fetch_session()
       |> get_session(:user_id)

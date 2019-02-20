@@ -1,4 +1,4 @@
-defmodule KouekiWeb.InstanceController do
+defmodule KouekiWeb.CommonAPI.InstanceController do
   use KouekiWeb, :controller
 
   alias KouekiWeb.{

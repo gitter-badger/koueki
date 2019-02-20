@@ -8,15 +8,16 @@ defmodule Koueki.Attribute do
   }
 
   alias Ecto.{
+    UUID,
     Changeset
   }
 
   schema "attributes" do
-    field :uuid, :binary_id
+    field :uuid, UUID, autogenerate: true
     field :type, :string
     field :category, :string
-    field :to_ids, :boolean
-    field :distribution, :integer
+    field :to_ids, :boolean, default: false
+    field :distribution, :integer, default: 0
     field :comment, :string, default: ""
     field :deleted, :boolean, default: false
     field :data, :string
@@ -26,17 +27,48 @@ defmodule Koueki.Attribute do
     belongs_to :event, Koueki.Event
   end
 
-  def changeset(params) do
-    %Attribute{}
+  def changeset(struct, params) do
+    struct
     |> cast(params, [:type, :category, :to_ids, :distribution, :comment, :value])
-    |> validate_required([:type, :category, :value])
+    |> validate_required([:type, :value])
     |> validate_inclusion(:distribution, 0..5)
-    |> validate_inclusion(:category, Koueki.Validation.Category.valid_categories)
-    |> validate_type()
+    |> validate_inclusion(:type, Koueki.Attribute.Type.get_all("string"))
+    |> validate_category()
+    |> validate_to_ids()
   end
 
-  defp validate_type(%Changeset{changes: %{category: category}} = changeset) do
-    valid_types = Koueki.Validation.Type.valid_types(category)
-    validate_inclusion(changeset, :type, valid_types)
+  defp validate_category(%Changeset{changes: %{type: type, category: category}} = changeset) do
+    valid_categories =
+      type
+      |> Koueki.Attribute.Type.get()
+      |> Map.get(:valid_for)
+
+    if Enum.member?(valid_categories, category) do
+      changeset
+    else
+      add_error(changeset, :category,
+        "'#{category}' is not a valid category for '#{type}' - valid: #{Enum.join(valid_categories, ", ")}")
+    end
+  end
+
+  defp validate_category(%Changeset{changes: %{type: type}} = changeset) do
+    # No category
+    default_category =
+      type
+      |> Koueki.Attribute.Type.get()
+      |> get_in([:defaults, :category])
+
+    put_change(changeset, :category, default_category)
+  end
+
+  defp validate_to_ids(%Changeset{changes: %{to_ids: _}} = changeset), do: changeset
+
+  defp validate_to_ids(%Changeset{changes: %{type: type}} = changeset) do
+    default_to_ids =
+      type
+      |> Koueki.Attribute.Type.get()
+      |> get_in([:defaults, :to_ids])
+
+    put_change(changeset, :to_ids, default_to_ids)
   end
 end

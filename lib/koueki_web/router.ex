@@ -25,26 +25,26 @@ defmodule KouekiWeb.Router do
     get "/", PageController, :index
   end
 
-  scope "/instance", KouekiWeb do
+  scope "/instance", KouekiWeb.CommonAPI do
     pipe_through :api
 
     get "/config", InstanceController, :config
   end
 
-  scope "/auth", KouekiWeb do
-    pipe_through :api        
-    
+  scope "/auth", KouekiWeb.CommonAPI do
+    pipe_through :api
+
     post "/login", SessionController, :login
     post "/logout", SessionController, :logout
   end
 
-  scope "/v1", KouekiWeb do
+  scope "/v1", KouekiWeb.MISPAPI do
     pipe_through :authenticated_api
 
-    get "/", EventsController, :test
+    post "/events", EventsController, :create
   end
 
-  scope "/v2", KouekiWeb do
+  scope "/v2", KouekiWeb.KouekiAPI do
     pipe_through :authenticated_api
   end
 

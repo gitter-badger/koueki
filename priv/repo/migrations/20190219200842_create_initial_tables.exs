@@ -2,19 +2,18 @@ defmodule Koueki.Repo.Migrations.CreateInitialTables do
   use Ecto.Migration
 
   def change do
-
-    create table (:orgcs) do
-      add :uuid, :binary_id
+    create table(:orgcs) do
+      add :uuid, :uuid
       add :name, :string
     end
 
-    create table (:orgs) do
-      add :uuid, :binary_id
+    create table(:orgs) do
+      add :uuid, :uuid
       add :name, :string
     end
 
     create table(:events) do
-      add :uuid, :binary_id
+      add :uuid, :uuid
       add :published, :boolean
       add :info, :string
       add :threat_level_id, :integer, default: 4
@@ -28,11 +27,11 @@ defmodule Koueki.Repo.Migrations.CreateInitialTables do
       timestamps()
     end
 
-    create table (:attributes) do
-      add :uuid, :binary_id
+    create table(:attributes) do
+      add :uuid, :uuid
       add :type, :string
       add :category, :string
-      add :to_ids, :boolean 
+      add :to_ids, :boolean
       add :distribution, :integer
       add :comment, :string, default: ""
       add :deleted, :boolean, default: false

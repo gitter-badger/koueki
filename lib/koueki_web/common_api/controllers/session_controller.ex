@@ -1,4 +1,4 @@
-defmodule KouekiWeb.SessionController do
+defmodule KouekiWeb.CommonAPI.SessionController do
   use KouekiWeb, :controller
 
   alias Koueki.{
@@ -15,7 +15,7 @@ defmodule KouekiWeb.SessionController do
   def login(conn, %{"email" => email, "password" => password}) do
     with %User{} = user <- Repo.get_by(User, email: email) do
       if User.verify_password(user, password) do
-        conn  
+        conn
         |> fetch_session()
         |> put_session(:user_id, user.id)
         |> json(%{ok: true})
@@ -31,7 +31,7 @@ defmodule KouekiWeb.SessionController do
     conn
     |> put_status(400)
     |> json(%{error: "Both email and password are required to log in!"})
-  end  
+  end
 
   def logout(conn, _) do
     conn
