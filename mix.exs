@@ -46,7 +46,8 @@ defmodule Koueki.MixProject do
       {:comeonin, "~> 5.0"},
       {:pbkdf2_elixir, "~> 1.0"},
       {:email_checker, "~> 0.1.2"},
-      {:ex_random_string, "~> 1.0.1"}
+      {:ex_random_string, "~> 1.0.1"},
+      {:ex_machina, "~> 2.2"}
     ]
   end
 

@@ -42,6 +42,7 @@ defmodule KouekiWeb.Router do
     pipe_through :authenticated_api
 
     post "/events", EventsController, :create
+    get "/servers/getPyMISPVersion.json", ServerController, :pymisp_version
   end
 
   scope "/v2", KouekiWeb.KouekiAPI do
