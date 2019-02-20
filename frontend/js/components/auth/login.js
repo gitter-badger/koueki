@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { post } from "utils";
 import { setLoginStatus } from "actions/config";
 import { toast } from "react-toastify";
+import { withRouter } from "react-router-dom";
 
 class LoginForm extends React.PureComponent {
   state = { email: "", password: "" }
@@ -23,7 +24,8 @@ class LoginForm extends React.PureComponent {
       this.props.setLoginStatus(false);
     } else {
       toast.success("Logged in");
-      this.props.setLoginStatus(true);
+      this.props.setLoginStatus(true); 
+      this.props.history.push("/");
     }
   }
 
@@ -57,4 +59,4 @@ const mapDispatchToProps = ({
   setLoginStatus
 });
 
-export default connect(null, mapDispatchToProps)(LoginForm);
+export default withRouter(connect(null, mapDispatchToProps)(LoginForm));

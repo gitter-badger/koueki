@@ -1,35 +1,33 @@
 import React from "react";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { TEST_CONNECTION } from "actions/config";
+import { Header, Container } from "semantic-ui-react";
+
+import RequireLoginStatus from "require-login-status";
 import AttributeSearch from "attributes/search";
 import AttributeList from "attributes/list";
+import { NavLink } from "react-router-dom";
 
-class Home extends React.PureComponent {
-    static propTypes = {
-        loggedIn: PropTypes.bool
-    }
+const Home = () => (
+    <section>
+        <RequireLoginStatus status={false}>
+            <Header as={"h2"} inverted>Welcome to Koueki</Header>
+            <blockquote>公益, public benefit</blockquote>
 
-    render() {
-        const { loggedIn } = this.props;
+            <Container text>
+                Koueki is a lightweight malware information sharing
+                server using <a href="https://github.com/MISP/misp-rfc" target="_blank">
+                MISP's data format</a>
+            </Container>
 
-        if (!loggedIn) {
-            return (
-                <h1>Not logged in, please set your credentials via the "Change instance" button in the top right</h1>
-            );
-        }
+            <Container text>
+               To get started, <NavLink to="/login">Login</NavLink>
+            </Container>
+        </RequireLoginStatus>
 
-        return (    
-            <div>
-                <AttributeSearch />
-                <AttributeList />
-            </div>
-        );
-    }
-}
+        <RequireLoginStatus status={true}>
+            <AttributeSearch />
+            <AttributeList />
+        </RequireLoginStatus>
+    </section>
+);
 
-const mapStateToProps = ({ config }) => ({
-    loggedIn: config.loggedIn
-});
-
-export default connect(mapStateToProps)(Home);
+export default Home;

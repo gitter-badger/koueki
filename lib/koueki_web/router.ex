@@ -25,6 +25,11 @@ defmodule KouekiWeb.Router do
     get "/", PageController, :index
   end
 
+  scope "/instance", KouekiWeb do
+    pipe_through :api
+
+    get "/config", InstanceController, :config
+  end
 
   scope "/auth", KouekiWeb do
     pipe_through :api        
@@ -33,10 +38,14 @@ defmodule KouekiWeb.Router do
     post "/logout", SessionController, :logout
   end
 
-  scope "/events", KouekiWeb do
+  scope "/v1", KouekiWeb do
     pipe_through :authenticated_api
 
     get "/", EventsController, :test
+  end
+
+  scope "/v2", KouekiWeb do
+    pipe_through :authenticated_api
   end
 
   # Fallback

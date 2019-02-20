@@ -6,7 +6,7 @@ import { routerMiddleware } from 'connected-react-router';
 import createBrowserHistory from "history/createBrowserHistory";
 import createSagaMiddleware from "redux-saga";
 import sagas from "sagas/index";
-import { TEST_CONNECTION } from "actions/config";
+import { REQUEST_CONFIG } from "actions/config";
 
 
 export let history = createBrowserHistory();
@@ -30,6 +30,8 @@ export let store = createStore(
 sagaMiddleware.run(sagas);
 
 export let persistor = persistStore(store);
+
+store.dispatch({type: REQUEST_CONFIG});
 
 export default store;
 

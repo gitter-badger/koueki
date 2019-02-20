@@ -26,11 +26,13 @@ class NavBar extends React.Component {
                 </Menu.Item>
 
                 <Menu.Menu>
-                    { centralNav.map((navElement, key) => (
-                        <Menu.Item key={key}>
-                            <NavLink to={navElement.link}>{navElement.name}</NavLink>
-                        </Menu.Item>
-                    ))}
+                    <RequireLoginStatus status={true}>
+                        { centralNav.map((navElement, key) => (
+                            <Menu.Item key={key}>
+                                <NavLink to={navElement.link}>{navElement.name}</NavLink>
+                            </Menu.Item>
+                        ))}
+                    </RequireLoginStatus>
                 </Menu.Menu>
                 <Menu.Menu position="right">
                   <Menu.Item>
