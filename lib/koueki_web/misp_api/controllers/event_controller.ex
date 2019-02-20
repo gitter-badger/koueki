@@ -8,7 +8,6 @@ defmodule KouekiWeb.MISPAPI.EventsController do
   }
 
   alias KouekiWeb.{
-    ErrorFormatter,
     MISPAPI
   }
 
@@ -36,7 +35,7 @@ defmodule KouekiWeb.MISPAPI.EventsController do
       # Base event invalid, do nothing
       conn
       |> put_status(400)
-      |> json(%{error: ErrorFormatter.format_validation_error(event)})
+      |> json(%{error: MISPAPI.ErrorFormatter.format_validation_error(event)})
     end
   end
 

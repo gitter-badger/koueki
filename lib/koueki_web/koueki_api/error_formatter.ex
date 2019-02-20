@@ -1,4 +1,4 @@
-defmodule KouekiWeb.ErrorFormatter do
+defmodule KouekiWeb.KouekiAPI.ErrorFormatter do
   alias Ecto.Changeset
 
   @doc """
