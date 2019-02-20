@@ -31,7 +31,7 @@ defmodule Koueki.Attribute do
     |> cast(params, [:type, :category, :to_ids, :distribution, :comment, :value])
     |> validate_required([:type, :category, :value])
     |> validate_inclusion(:distribution, 0..5)
-    |> validate_inclusion(:category, Koueki.Validation.Category.validate_categories)
+    |> validate_inclusion(:category, Koueki.Validation.Category.valid_categories)
     |> validate_type()
   end
 

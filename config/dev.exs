@@ -17,7 +17,7 @@ config :koueki, KouekiWeb.Endpoint,
       "--mode",
       "development",
       "--watch-stdin",
-      cd: Path.expand("../assets", __DIR__)
+      cd: Path.expand("../frontend", __DIR__)
     ]
   ]
 
