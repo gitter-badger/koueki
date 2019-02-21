@@ -1,4 +1,4 @@
-defmodule KouekiWeb.MISPAPI.ErrorFormatter do
+defmodule KouekiWeb.ErrorFormatter do
   alias Ecto.Changeset
 
   alias KouekiWeb.ErrorHelpers

@@ -29,6 +29,31 @@ defmodule KouekiWeb.MISPAPI.EventsControllerTest do
 
     assert %{"Event" => %{"Attribute" => attributes}} = json_response(conn, 201)
     assert [%{"type" => "ip-dst", "value" => "8.8.8.8", "category" => "Network activity"}] = attributes
-      
+
+    conn =
+      build_conn()
+      |> assign(:user, user)
+      |> post("/v1/events/", %{info: "yui is best yuru", Attribute: [
+        %{value: "8.8.8.8"}
+      ]})
+
+    assert %{"error" => %{"attributes" => [
+      %{"type" => ["can't be blank"]}
+    ]}} = json_response(conn, 400)
+        
+    conn =
+      build_conn()
+      |> assign(:user, user)
+      |> post("/v1/events/", %{info: "yui is best yuru", Attribute: [
+        %{type: "ip-dst", value: "8.8.8.8", Tag: [
+          %{name: "plastic love"}                                     
+        ]}                                                              
+      ]})                   
+                            
+    assert %{"Event" => 
+      %{"Attribute" => [
+        %{"value" => "8.8.8.8", "Tag" => [%{"id" => _, "name" => "plastic love"}]}
+      ]}
+    } = json_response(conn, 201)
   end
 end

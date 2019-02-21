@@ -25,13 +25,13 @@ defmodule KouekiWeb.Router do
     get "/", PageController, :index
   end
 
-  scope "/instance", KouekiWeb.CommonAPI do
+  scope "/instance", KouekiWeb do
     pipe_through :api
 
     get "/config", InstanceController, :config
   end
 
-  scope "/auth", KouekiWeb.CommonAPI do
+  scope "/auth", KouekiWeb do
     pipe_through :api
 
     post "/login", SessionController, :login
@@ -42,11 +42,19 @@ defmodule KouekiWeb.Router do
     pipe_through :authenticated_api
 
     post "/events", EventsController, :create
+    post "/events/add", EventsController, :create
+
+    get "/tags/view/:id", TagController, :view
+    post "/tags", TagController, :create 
+    post "/tags/add", TagController, :create
+
     get "/servers/getPyMISPVersion.json", ServerController, :pymisp_version
   end
 
-  scope "/v2", KouekiWeb.KouekiAPI do
+  scope "/v2", KouekiWeb do
     pipe_through :authenticated_api
+
+    post "/events", EventsController, :create
   end
 
   # Fallback

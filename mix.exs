@@ -47,7 +47,8 @@ defmodule Koueki.MixProject do
       {:pbkdf2_elixir, "~> 1.0"},
       {:email_checker, "~> 0.1.2"},
       {:ex_random_string, "~> 1.0.1"},
-      {:ex_machina, "~> 2.2"}
+      {:ex_machina, "~> 2.2"},
+      {:timex, "~> 3.1"}
     ]
   end
 

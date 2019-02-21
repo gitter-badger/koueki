@@ -1,4 +1,4 @@
-defmodule KouekiWeb.CommonAPI.SessionController do
+defmodule KouekiWeb.SessionController do
   use KouekiWeb, :controller
 
   alias Koueki.{

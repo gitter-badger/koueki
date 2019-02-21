@@ -4,7 +4,9 @@ defmodule Koueki.Attribute do
   import Ecto.Changeset
 
   alias Koueki.{
-    Attribute
+    Attribute,
+    Event,
+    Tag
   }
 
   alias Ecto.{
@@ -24,7 +26,9 @@ defmodule Koueki.Attribute do
     field :value, :string
 
     timestamps()
+
     belongs_to :event, Koueki.Event
+    many_to_many :tags, Koueki.Tag, join_through: "attribute_tags"
   end
 
   def changeset(struct, params) do
@@ -35,6 +39,7 @@ defmodule Koueki.Attribute do
     |> validate_inclusion(:type, Koueki.Attribute.Type.get_all("string"))
     |> validate_category()
     |> validate_to_ids()
+    |> put_assoc(:tags, Tag.find_or_create(Map.get(params, "tags", [])))
   end
 
   defp validate_category(%Changeset{changes: %{type: type, category: category}} = changeset) do
@@ -61,6 +66,8 @@ defmodule Koueki.Attribute do
     put_change(changeset, :category, default_category)
   end
 
+  defp validate_category(%Changeset{changes: %{}} = changeset), do: changeset
+
   defp validate_to_ids(%Changeset{changes: %{to_ids: _}} = changeset), do: changeset
 
   defp validate_to_ids(%Changeset{changes: %{type: type}} = changeset) do
@@ -71,4 +78,6 @@ defmodule Koueki.Attribute do
 
     put_change(changeset, :to_ids, default_to_ids)
   end
+
+  defp validate_to_ids(%Changeset{changes: %{}} = changeset), do: changeset
 end
