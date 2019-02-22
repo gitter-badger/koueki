@@ -5,6 +5,12 @@ defmodule KouekiWeb.EventView do
     Event
   }
 
+  alias KouekiWeb.{
+    OrgView,
+    AttributeView,
+    TagView
+  }
+
   def render("event.json", %{event: event}) do
     %{
       id: to_string(event.id),
@@ -15,6 +21,7 @@ defmodule KouekiWeb.EventView do
       analysis: to_string(event.analysis),
       date: to_string(event.date),
       distribution: to_string(event.distribution),
+      org: OrgView.render("org.json", %{org: event.org}),
       attributes: render_many(event.attributes, KouekiWeb.AttributeView, "attribute.json"),
       tags: render_many(event.tags, KouekiWeb.TagView, "tag.json")
     }
@@ -31,6 +38,10 @@ defmodule KouekiWeb.EventView do
         analysis: to_string(event.analysis),
         date: to_string(event.date),
         distribution: to_string(event.distribution),
+        org_id: to_string(event.org_id),
+        orgc_id: to_string(event.org_id),
+        Org: OrgView.render("org.misp.json", %{org: event.org}),
+        Orgc: OrgView.render("org.misp.json", %{org: event.org}),
         Attribute: render_many(event.attributes, KouekiWeb.AttributeView, "attribute.misp.json"),
         Tag: render_many(event.tags, KouekiWeb.TagView, "tag.json")
       }

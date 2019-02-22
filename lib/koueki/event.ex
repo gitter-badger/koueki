@@ -23,7 +23,7 @@ defmodule Koueki.Event do
     field :date, :date
     field :publish_timestamp, :utc_datetime
     field :attribute_count, :integer
-    field :distribution, :integer, default: 0
+    field :distribution, :integer, default: 3
 
     timestamps()
 
@@ -38,13 +38,13 @@ defmodule Koueki.Event do
         where: event.id == ^event.id,
         left_join: attributes in assoc(event, :attributes),
         left_join: attr_tags in assoc(attributes, :tags),
-        preload: [:tags, attributes: {attributes, tags: attr_tags}]
+        preload: [:org, :tags, attributes: {attributes, tags: attr_tags}]
     )
   end
 
-  def changeset(params) do
-    %Event{}
-    |> cast(params, [:published, :info, :threat_level_id, :analysis, :date, :distribution])
+  def changeset(struct, params) do
+    struct
+    |> cast(params, [:published, :info, :threat_level_id, :analysis, :date, :distribution, :org_id])
     |> cast_assoc(:attributes, with: &Attribute.changeset/2)
     |> put_assoc(:tags, Tag.find_or_create(Map.get(params, "tags", [])))
     |> validate_required([:info])

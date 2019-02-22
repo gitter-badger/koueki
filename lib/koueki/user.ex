@@ -14,10 +14,10 @@ defmodule Koueki.User do
     belongs_to :org, Koueki.Org
   end
 
-  def create(params) do
+  def changeset(struct, params) do
     changeset =
-      %User{}
-      |> cast(params, [:email, :password])
+      struct
+      |> cast(params, [:email, :password, :org_id])
       |> validate_required([:email, :password])
 
     if changeset.valid? do
@@ -27,9 +27,8 @@ defmodule Koueki.User do
       changeset
       |> put_change(:password_hash, hashed)
       |> put_change(:apikey, apikey)
-      |> Repo.insert()
     else
-      {:error, changeset}
+      changeset
     end
   end
 

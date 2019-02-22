@@ -40,4 +40,5 @@ defmodule KouekiWeb.MISPAPI.EventsController do
   def create(conn, params) do
     create(conn, %{"Event" => params})
   end
+
 end

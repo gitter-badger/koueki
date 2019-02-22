@@ -41,13 +41,17 @@ defmodule KouekiWeb.Router do
   scope "/v1", KouekiWeb.MISPAPI do
     pipe_through :authenticated_api
 
+    get "/events/:id", EventsController, :view
     get "/events/view/:id", EventsController, :view
     post "/events", EventsController, :create
     post "/events/add", EventsController, :create
 
+    get "/attributes/describeTypes.json", AttributeController, :describe_types
+
     get "/tags/view/:id", TagController, :view
     post "/tags", TagController, :create
     post "/tags/add", TagController, :create
+    post "/tags/attachTagToObject", TagController, :attach
 
     get "/servers/getPyMISPVersion.json", ServerController, :pymisp_version
   end

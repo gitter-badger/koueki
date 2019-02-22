@@ -10,7 +10,9 @@ defmodule KouekiWeb.EventsController do
 
   alias KouekiWeb.{
     EventView,
-    Status
+    Status,
+    User,
+    Utils
   }
 
   def view(conn, %{"id" => id}, render_as \\ "event.json") do
@@ -25,7 +27,10 @@ defmodule KouekiWeb.EventsController do
   end
 
   def create(conn, %{} = params, render_as \\ "event.json") do
-    event = Event.changeset(params)
+    user = Utils.get_user(conn)
+    params = Map.put(params, "org_id", user.org_id)
+
+    event = Event.changeset(%Event{}, params)
 
     if event.valid? do
       with {:ok, event} <- Repo.insert(event) do

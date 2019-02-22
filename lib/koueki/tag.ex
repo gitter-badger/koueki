@@ -36,6 +36,9 @@ defmodule Koueki.Tag do
     )
   end
 
+
+  def find_or_create(%Tag{id: _} = tag), do: tag
+
   def find_or_create(%{} = params) do
     with %Tag{} = tag <- find_by_id_or_name(params) do
       tag
