@@ -7,7 +7,7 @@ defmodule KouekiWeb.EventView do
 
   def render("event.json", %{event: event}) do
     %{
-      id: to_string(event.id),           
+      id: to_string(event.id),
       uuid: event.uuid,
       published: to_string(event.published),
       info: event.info,

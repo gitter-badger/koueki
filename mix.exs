@@ -48,7 +48,8 @@ defmodule Koueki.MixProject do
       {:email_checker, "~> 0.1.2"},
       {:ex_random_string, "~> 1.0.1"},
       {:ex_machina, "~> 2.2"},
-      {:timex, "~> 3.1"}
+      {:timex, "~> 3.1"},
+      {:scrivener_ecto, "~> 2.0"}
     ]
   end
 

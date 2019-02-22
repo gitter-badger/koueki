@@ -17,13 +17,22 @@ defmodule Koueki.Tag do
     many_to_many :attributes, Koueki.Attribute, join_through: "attribute_tags"
   end
 
+  def changeset(struct, params) do
+    struct
+    |> cast(params, [:name, :colour])
+    |> validate_required([:name])
+    |> validate_format(:colour, ~r/#[0-9A-Fa-f]{6}/)
+    |> validate_length(:name, min: 1)
+    |> unique_constraint(:name)
+  end
+
   defp find_by_id_or_name(params) do
     id = Map.get(params, "id", 0)
     name = Map.get(params, "name", "")
 
     Repo.one(
       from tag in Tag,
-      where: tag.id == ^id or tag.name == ^name
+        where: tag.id == ^id or tag.name == ^name
     )
   end
 
@@ -31,13 +40,7 @@ defmodule Koueki.Tag do
     with %Tag{} = tag <- find_by_id_or_name(params) do
       tag
     else
-      _ -> 
-        %Tag{}
-        |> cast(params, [:name, :colour])
-        |> validate_required([:name])
-        |> validate_format(:colour, ~r/#[0-9A-Fa-f]{6}/)
-        |> validate_length(:name, min: 1)
-        |> unique_constraint(:name)
+      _ -> changeset(%Tag{}, params)
     end
   end
 

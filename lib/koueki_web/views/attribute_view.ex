@@ -30,5 +30,4 @@ defmodule KouekiWeb.AttributeView do
       Tag: render_many(attribute.tags, KouekiWeb.TagView, "tag.json")
     }
   end
-
-end      
+end

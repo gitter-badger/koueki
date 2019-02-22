@@ -787,5 +787,4 @@ defmodule Koueki.Attribute.Type do
   def get(type) when is_binary(type) do
     Map.get(types(), String.to_atom(type))
   end
-
 end

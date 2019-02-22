@@ -28,20 +28,17 @@ defmodule Koueki.Event do
     timestamps()
 
     belongs_to :org, Koueki.Org
-    belongs_to :orgc, Koueki.OrgC
-
-    many_to_many :tags, Koueki.Tag, join_through: "event_tags"
-
     has_many :attributes, Koueki.Attribute
+    many_to_many :tags, Koueki.Tag, join_through: "event_tags"
   end
 
   def load_assoc(%Event{} = event) do
     Repo.one(
       from event in Event,
-      where: event.id == ^event.id,
-      left_join: attributes in assoc(event, :attributes),
-      left_join: attr_tags in assoc(attributes, :tags),
-      preload: [:tags, attributes: {attributes, tags: attr_tags}]
+        where: event.id == ^event.id,
+        left_join: attributes in assoc(event, :attributes),
+        left_join: attr_tags in assoc(attributes, :tags),
+        preload: [:tags, attributes: {attributes, tags: attr_tags}]
     )
   end
 
@@ -63,6 +60,6 @@ defmodule Koueki.Event do
 
   defp validate_date(%Changeset{} = changeset) do
     changeset
-    |> put_change(:date, Timex.today)
+    |> put_change(:date, Timex.today())
   end
 end

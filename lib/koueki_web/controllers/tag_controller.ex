@@ -29,11 +29,10 @@ defmodule KouekiWeb.TagController do
         |> put_status(201)
         |> json(TagView.render(render_as, %{tag: tag}))
       else
-        err -> Status.internal_error(conn, "Something happened when inserting a tag")
+        {:error, tag} -> Status.validation_error(conn, tag)
       end
     else
       Status.validation_error(conn, tag)
     end
   end
-
 end

@@ -20,7 +20,7 @@ defmodule KouekiWeb.Status do
   end
 
   def validation_error(conn, changeset) do
-    conn                                                                               
+    conn
     |> put_status(400)
     |> json(%{error: KouekiWeb.ErrorFormatter.format_validation_error(changeset)})
   end

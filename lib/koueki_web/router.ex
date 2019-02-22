@@ -41,11 +41,12 @@ defmodule KouekiWeb.Router do
   scope "/v1", KouekiWeb.MISPAPI do
     pipe_through :authenticated_api
 
+    get "/events/view/:id", EventsController, :view
     post "/events", EventsController, :create
     post "/events/add", EventsController, :create
 
     get "/tags/view/:id", TagController, :view
-    post "/tags", TagController, :create 
+    post "/tags", TagController, :create
     post "/tags/add", TagController, :create
 
     get "/servers/getPyMISPVersion.json", ServerController, :pymisp_version
@@ -54,7 +55,11 @@ defmodule KouekiWeb.Router do
   scope "/v2", KouekiWeb do
     pipe_through :authenticated_api
 
+    get "/events/:id", EventsController, :view
     post "/events", EventsController, :create
+
+    get "/tags/:id", TagController, :view
+    post "/tags", TagController, :create
   end
 
   # Fallback

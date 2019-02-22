@@ -51,8 +51,13 @@ defmodule Koueki.Attribute do
     if Enum.member?(valid_categories, category) do
       changeset
     else
-      add_error(changeset, :category,
-        "'#{category}' is not a valid category for '#{type}' - valid: #{Enum.join(valid_categories, ", ")}")
+      add_error(
+        changeset,
+        :category,
+        "'#{category}' is not a valid category for '#{type}' - valid: #{
+          Enum.join(valid_categories, ", ")
+        }"
+      )
     end
   end
 

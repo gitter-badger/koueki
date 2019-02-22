@@ -18,7 +18,7 @@ defmodule KouekiWeb.EventsController do
       event = Event.load_assoc(event)
 
       conn
-      |> json(EventView.render(render_as, %{event: event})) 
+      |> json(EventView.render(render_as, %{event: event}))
     else
       _ -> Status.not_found(conn, "Event #{id} not found")
     end
@@ -29,14 +29,14 @@ defmodule KouekiWeb.EventsController do
 
     if event.valid? do
       with {:ok, event} <- Repo.insert(event) do
-        event = Event.load_assoc(event)        
+        event = Event.load_assoc(event)
 
         conn
         |> put_status(201)
         |> json(EventView.render(render_as, %{event: event}))
       else
         err ->
-          IO.inspect err
+          IO.inspect(err)
           Status.internal_error(conn, "Error inserting event")
       end
     else

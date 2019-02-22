@@ -10,6 +10,8 @@ defmodule Koueki.User do
     field :password, :string, virtual: true
     field :password_hash, :string
     field :apikey, :string
+
+    belongs_to :org, Koueki.Org
   end
 
   def create(params) do

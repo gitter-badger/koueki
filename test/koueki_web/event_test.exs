@@ -1,10 +1,22 @@
-defmodule KouekiWeb.KouekiAPI.EventsControllerTest do
+defmodule KouekiWeb.EventsTest do
   use KouekiWeb.ConnCase
 
   import Koueki.Factory
 
+  test "GET /v2/events/:id", %{conn: conn} do
+    user = insert(:user)
+    event = insert(:event)
+
+    conn =
+      conn
+      |> assign(:user, user)
+      |> get("/v2/events/#{event.id}")
+
+    assert %{"info" => _} = json_response(conn, 200)
+  end
+
   test "POST /v2/event/", %{conn: conn} do
-    user = insert(:user) 
+    user = insert(:user)
 
     conn =
       conn
@@ -13,45 +25,66 @@ defmodule KouekiWeb.KouekiAPI.EventsControllerTest do
 
     assert %{"info" => "my event"} = json_response(conn, 201)
 
-    conn = 
+    conn =
       build_conn()
       |> assign(:user, user)
       |> post("/v2/events/", %{})
 
     assert %{"error" => %{"info" => ["can't be blank"]}} = json_response(conn, 400)
 
-    conn = 
+    conn =
       build_conn()
       |> assign(:user, user)
-      |> post("/v2/events/", %{info: "yui is best yuru", attributes: [
-        %{type: "ip-dst", value: "8.8.8.8"}
-      ]})
+      |> post("/v2/events/", %{
+        info: "yui is best yuru",
+        attributes: [
+          %{type: "ip-dst", value: "8.8.8.8"}
+        ]
+      })
 
     assert %{"attributes" => attributes} = json_response(conn, 201)
-    assert [%{"type" => "ip-dst", "value" => "8.8.8.8", "category" => "Network activity"}] = attributes
+
+    assert [%{"type" => "ip-dst", "value" => "8.8.8.8", "category" => "Network activity"}] =
+             attributes
 
     conn =
       build_conn()
       |> assign(:user, user)
-      |> post("/v2/events/", %{info: "yui is best yuru", attributes: [
-        %{value: "8.8.8.8"}
-      ]})
+      |> post("/v2/events/", %{
+        info: "yui is best yuru",
+        attributes: [
+          %{value: "8.8.8.8"}
+        ]
+      })
 
-    assert %{"error" => %{"attributes" => [
-      %{"type" => ["can't be blank"]}
-    ]}} = json_response(conn, 400)
+    assert %{
+             "error" => %{
+               "attributes" => [
+                 %{"type" => ["can't be blank"]}
+               ]
+             }
+           } = json_response(conn, 400)
 
     conn =
       build_conn()
       |> assign(:user, user)
-      |> post("/v2/events/", %{info: "yui is best yuru", attributes: [
-        %{type: "ip-dst", value: "8.8.8.8", tags: [
-          %{name: "plastic love"}
-        ]}
-      ]})
+      |> post("/v2/events/", %{
+        info: "yui is best yuru",
+        attributes: [
+          %{
+            type: "ip-dst",
+            value: "8.8.8.8",
+            tags: [
+              %{name: "plastic love"}
+            ]
+          }
+        ]
+      })
 
-    assert %{"attributes" => [
-      %{"value" => "8.8.8.8", "tags" => [%{"id" => _, "name" => "plastic love"}]}
-    ]} = json_response(conn, 201)
+    assert %{
+             "attributes" => [
+               %{"value" => "8.8.8.8", "tags" => [%{"id" => _, "name" => "plastic love"}]}
+             ]
+           } = json_response(conn, 201)
   end
 end
