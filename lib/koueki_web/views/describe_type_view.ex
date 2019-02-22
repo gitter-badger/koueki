@@ -13,14 +13,20 @@ defmodule KouekiWeb.DescribeTypeView do
         end)
   end
 
-  def render("type_mapping.json", types) do
-    types
-    |> Map.keys()
+  def render("type_mapping.json", categories, types) do
+    categories
     |> Enum.reduce(
         %{},
-        fn key, acc ->
+        fn category, acc ->
           acc
-          |> Map.put(key, get_in(types, [key, :valid_for]))
+          |> Map.put(category, 
+            types
+            |> Map.keys()
+            |> Enum.filter(fn type ->
+                get_in(types, [type, :valid_for])
+                |> Enum.member?(category)
+            end)
+          )
         end)
   end
 end

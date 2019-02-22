@@ -47,6 +47,7 @@ defmodule KouekiWeb.Router do
     post "/events/add", EventsController, :create
 
     get "/attributes/describeTypes.json", AttributeController, :describe_types
+    post "/attributes/add/:event_id", EventsController, :add_attribute
 
     get "/tags/view/:id", TagController, :view
     post "/tags", TagController, :create

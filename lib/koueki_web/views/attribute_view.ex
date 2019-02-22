@@ -30,4 +30,14 @@ defmodule KouekiWeb.AttributeView do
       Tag: render_many(attribute.tags, KouekiWeb.TagView, "tag.json")
     }
   end
+
+  def render("attribute.wrapped.json", %{attribute: attribute}) do
+    %{
+      Attribute: render("attribute.misp.json", %{attribute: attribute})
+    }
+  end
+
+  def render("attributes.wrapped.json", %{attributes: attributes}) do
+    render_many(attributes, KouekiWeb.AttributeView, "attribute.wrapped.json")
+  end
 end
