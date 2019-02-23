@@ -31,9 +31,22 @@ defmodule Koueki.Attribute do
     many_to_many :tags, Koueki.Tag, join_through: "attribute_tags"
   end
 
+  def normalise_from_misp(%{} = params) do
+    params
+    |> Map.put("tags", Map.get(params, "Tag", []))
+  end
+
+  def normalise_from_misp(params) when is_list(params) do
+    Enum.map(params, &normalise_from_misp/1)
+  end
+
   def changeset(struct, params) do
     struct
-    |> cast(params, [:type, :category, :to_ids, :distribution, :comment, :value])
+    |> cast(params, [:type, :category, :to_ids, :distribution, :comment, :value, :event_id])
+    |> unique_constraint(:attribute_is_unique,
+      name: :attribute_is_unique_constraint,
+      message: "Another attribute with a matching (value, type, category) exists on this event"
+    )
     |> validate_required([:type, :value])
     |> validate_inclusion(:distribution, 0..5)
     |> validate_inclusion(:type, Koueki.Attribute.Type.get_all("string"))
@@ -85,4 +98,5 @@ defmodule Koueki.Attribute do
   end
 
   defp validate_to_ids(%Changeset{changes: %{}} = changeset), do: changeset
+
 end

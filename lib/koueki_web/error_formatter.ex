@@ -10,4 +10,8 @@ defmodule KouekiWeb.ErrorFormatter do
   def format_validation_error(%Changeset{} = changeset) do
     Ecto.Changeset.traverse_errors(changeset, &ErrorHelpers.translate_error/1)
   end
+
+  def format_validation_error(changesets) when is_list(changesets) do
+    Enum.map(changesets, &format_validation_error/1)
+  end
 end

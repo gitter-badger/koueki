@@ -1,6 +1,10 @@
 defmodule KouekiWeb.AttributeView do
   use KouekiWeb, :view
 
+  def render("attributes.json", %{attributes: attributes}) do
+    render_many(attributes, KouekiWeb.AttributeView, "attribute.json")
+  end
+
   def render("attribute.json", %{attribute: attribute}) do
     %{
       id: to_string(attribute.id),

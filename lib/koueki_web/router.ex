@@ -62,6 +62,7 @@ defmodule KouekiWeb.Router do
 
     get "/events/:id", EventsController, :view
     post "/events", EventsController, :create
+    post "/events/:id/attributes/", EventsController, :add_attribute
 
     get "/tags/:id", TagController, :view
     post "/tags", TagController, :create

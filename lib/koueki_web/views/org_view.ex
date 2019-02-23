@@ -2,7 +2,7 @@ defmodule KouekiWeb.OrgView do
   use KouekiWeb, :view
 
   def render("org.json", %{org: org}) do
-    %{           
+    %{
       id: org.id,
       name: org.name,
       uuid: org.uuid

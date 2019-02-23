@@ -32,6 +32,28 @@ defmodule Koueki.Event do
     many_to_many :tags, Koueki.Tag, join_through: "event_tags"
   end
 
+  @doc """
+  Rename any MISP parameters to new not-entirely-retarded ones
+  """
+  def normalise_from_misp(%{} = params) do
+    params
+    |> Map.put(
+      "attributes",
+      params
+      |> Map.get("Attribute", [])
+      |> Attribute.normalise_from_misp()
+    )
+    |> Map.put("tags", Map.get(params, "Tag", []))
+  end
+
+  def get_with_preload(id, preload \\ []) do
+    Repo.one(
+      from event in Event,
+        where: event.id == ^id,
+        preload: ^preload
+    )
+  end
+
   def load_assoc(%Event{} = event) do
     Repo.one(
       from event in Event,
@@ -44,7 +66,15 @@ defmodule Koueki.Event do
 
   def changeset(struct, params) do
     struct
-    |> cast(params, [:published, :info, :threat_level_id, :analysis, :date, :distribution, :org_id])
+    |> cast(params, [
+      :published,
+      :info,
+      :threat_level_id,
+      :analysis,
+      :date,
+      :distribution,
+      :org_id
+    ])
     |> cast_assoc(:attributes, with: &Attribute.changeset/2)
     |> put_assoc(:tags, Tag.find_or_create(Map.get(params, "tags", [])))
     |> validate_required([:info])

@@ -2,6 +2,7 @@ defmodule KouekiWeb.EventsTest do
   use KouekiWeb.ConnCase
 
   import Koueki.Factory
+  import Koueki.TestHelper
 
   test "GET /v2/events/:id", %{conn: conn} do
     user = insert(:user)
@@ -86,5 +87,120 @@ defmodule KouekiWeb.EventsTest do
                %{"value" => "8.8.8.8", "tags" => [%{"id" => _, "name" => "plastic love"}]}
              ]
            } = json_response(conn, 201)
+  end
+
+  test "POST /v2/events/:id/attributes/", %{conn: conn} do
+    user = insert(:user)
+    event = insert(:event)
+
+    # Entirely fine case
+    ip = gen_ip()
+
+    conn =
+      conn
+      |> assign(:user, user)
+      |> post(
+        "/v2/events/#{event.id}/attributes/",
+        %{"value" => ip, "type" => "ip-dst"}
+      )
+
+    assert %{"value" => ip, "type" => "ip-dst"} = json_response(conn, 201)
+
+    # No type given
+    ip = gen_ip()
+
+    conn =
+      build_conn()
+      |> assign(:user, user)
+      |> post(
+        "/v2/events/#{event.id}/attributes/",
+        %{"value" => ip}
+      )
+
+    assert %{"error" => _} = json_response(conn, 400)
+
+    # Wrong category
+    conn =
+      build_conn()
+      |> assign(:user, user)
+      |> post(
+        "/v2/events/#{event.id}/attributes/",
+        %{"value" => ip, "type" => "ip-dst", "category" => "Artifacts dropped"}
+      )
+
+    assert %{"error" => _} = json_response(conn, 400)
+
+    # Tagging at the same time
+    ip = gen_ip()
+
+    conn =
+      build_conn()
+      |> assign(:user, user)
+      |> post(
+        "/v2/events/#{event.id}/attributes/",
+        %{"value" => ip, "type" => "ip-dst", "tags" => [%{"name" => "cofe"}]}
+      )
+
+    assert %{"value" => ip, "type" => "ip-dst", "tags" => [%{"name" => "cofe"}]} =
+             json_response(conn, 201)
+
+    # Two at once
+    first_ip = gen_ip()
+    second_ip = gen_ip()
+
+    conn =
+      build_conn()
+      |> assign(:user, user)
+      |> post(
+        "/v2/events/#{event.id}/attributes/",
+        %{
+          "_json" => [
+            %{"value" => first_ip, "type" => "ip-dst"},
+            %{"value" => second_ip, "type" => "ip-dst"}
+          ]
+        }
+      )
+
+    assert [
+             %{"value" => first_ip},
+             %{"value" => second_ip}
+           ] = json_response(conn, 201)
+
+    # Two at once, but one is invalid
+    first_ip = gen_ip()
+    second_ip = gen_ip()
+
+    conn =
+      build_conn()
+      |> assign(:user, user)
+      |> post(
+        "/v2/events/#{event.id}/attributes/",
+        %{
+          "_json" => [
+            %{"value" => first_ip},
+            %{"value" => second_ip, "type" => "ip-dst"}
+          ]
+        }
+      )
+
+    assert %{"error" => [%{"type" => _}]} = json_response(conn, 400)
+
+    # Duplicate value in one transaction - should be okie!
+    ip = gen_ip()
+
+    conn =
+      build_conn()
+      |> assign(:user, user)
+      |> post(
+        "/v2/events/#{event.id}/attributes/",
+        %{
+          "_json" => [
+            %{"value" => ip, "type" => "ip-dst"},
+            %{"value" => ip, "type" => "ip-dst"}
+          ]
+        }
+      )
+
+    assert [%{"value" => ip}] = json_response(conn, 201)
   end
 end

@@ -8,13 +8,14 @@ defmodule Mix.Tasks.Koueki.User do
   def run(["new", email, password]) do
     Common.start_koueki()
 
-    org = with %Org{} = org <- Repo.get_by(Org, local: true) do
-      org
-    else
-      _ -> 
-        {:ok, org} = create_first_org()
+    org =
+      with %Org{} = org <- Repo.get_by(Org, local: true) do
         org
-    end
+      else
+        _ ->
+          {:ok, org} = create_first_org()
+          org
+      end
 
     user = User.changeset(%User{}, %{email: email, password: password, org_id: org.id})
 
@@ -47,5 +48,4 @@ defmodule Mix.Tasks.Koueki.User do
       create_first_org()
     end
   end
-
 end

@@ -25,7 +25,8 @@ defmodule KouekiWeb.MISPAPI.AttributeController do
         types: Map.keys(types),
         categories: Category.categories(),
         sane_defaults: DescribeTypeView.render("sane_defaults.json", types),
-        category_type_mappings: DescribeTypeView.render("type_mapping.json", Category.categories(), types)
+        category_type_mappings:
+          DescribeTypeView.render("type_mapping.json", Category.categories(), types)
       }
     })
   end
