@@ -17,14 +17,14 @@ defmodule KouekiWeb.EventView do
 
   def render("event.json", %{event: event}) do
     %{
-      id: to_string(event.id),
+      id: event.id,
       uuid: event.uuid,
-      published: to_string(event.published),
+      published: event.published,
       info: event.info,
-      threat_level_id: to_string(event.threat_level_id),
-      analysis: to_string(event.analysis),
+      threat_level_id: event.threat_level_id,
+      analysis: event.analysis,
       date: to_string(event.date),
-      distribution: to_string(event.distribution),
+      distribution: event.distribution,
       org: OrgView.render("org.json", %{org: event.org}),
       attributes: render_many(event.attributes, KouekiWeb.AttributeView, "attribute.json"),
       tags: render_many(event.tags, KouekiWeb.TagView, "tag.json")
