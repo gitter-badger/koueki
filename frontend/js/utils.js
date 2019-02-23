@@ -16,3 +16,11 @@ export const getHeaders = (otherHeaders = {}) => ({
 export const post = (url, body) => fetch(getURL(url), {method: "POST", body: JSON.stringify(body), ...getHeaders()})
 
 export const get = (url) => fetch(getURL(url), {method: "GET", ...getHeaders()})
+
+export const format_error = ({ error: errors }) => {
+  let error_message = "";
+  Object.keys(errors).forEach(key => {
+    error_message += `${key}: ${errors[key].join(", ")}\n`;
+  });
+  return error_message;
+}

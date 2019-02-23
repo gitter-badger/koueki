@@ -11,6 +11,10 @@ defmodule KouekiWeb.EventView do
     TagView
   }
 
+  def render("events.json", %{events: events}) do
+    render_many(events, KouekiWeb.EventView, "event.json")
+  end
+
   def render("event.json", %{event: event}) do
     %{
       id: to_string(event.id),

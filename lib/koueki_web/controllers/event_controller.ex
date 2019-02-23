@@ -61,7 +61,9 @@ defmodule KouekiWeb.EventsController do
 
   If you post a raw JSON array, phoenix will cast to to the _json parameter
   """
-  def add_attribute(conn, %{"id" => event_id, "_json" => params}, opts \\ [])
+  def add_attribute(conn, params, opts \\ [])
+
+  def add_attribute(conn, %{"id" => event_id, "_json" => params}, opts)
       when is_list(params) do
     with %Event{} = event <- Repo.get(Event, event_id),
          {event_id, ""} <- Integer.parse(event_id) do
@@ -133,5 +135,12 @@ defmodule KouekiWeb.EventsController do
         Status.validation_error(conn, changeset)
       end
     end
+  end
+
+  def search(conn, params) do
+    {entries, page_count} = Event.search(params)
+    conn
+    |> put_resp_header("X-Page-Count", to_string(page_count))
+    |> json(EventView.render("events.json", %{events: entries}))
   end
 end

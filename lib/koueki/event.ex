@@ -92,4 +92,27 @@ defmodule Koueki.Event do
     changeset
     |> put_change(:date, Timex.today())
   end
+
+  def search(params) do
+    page =
+      from(event in Event,
+           left_join: attributes in assoc(event, :attributes),
+           left_join: attr_tags in assoc(attributes, :tags),
+           preload: [:org, :tags, attributes: {attributes, tags: attr_tags}])
+      |> limit_id(params)
+      |> order_by(desc: :id)
+      |> Repo.paginate(
+        page: Map.get(params, "page", 0),
+        page_size: Map.get(params, "limit", 20)
+      )
+
+    {page.entries, page.total_pages}
+  end
+
+  defp limit_id(query, %{"id" => id}) do
+    from(event in query, where: event.id == ^id)
+  end
+
+  defp limit_id(query, _), do: query
+    
 end

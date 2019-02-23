@@ -8,10 +8,10 @@ import { Button } from "semantic-ui-react";
 
 const EventList = ({ loading, events, pages, searchParams, getEvents }) => {
     const columns = [
-        { Header: "ID", accessor: "Event.id", minWidth: 10 },
-        { Header: "Date", accessor: "Event.date", minWidth: 15 },
-        { Header: "Info", accessor: "Event.info" },
-        { Header: "To Event", accessor: "Event.id", Cell: d => <NavLink to={`/events/${d.value}`}><Button color="black" icon="arrow right" /></NavLink>, minWidth: 10}
+        { Header: "ID", accessor: "id", minWidth: 10 },
+        { Header: "Date", accessor: "date", minWidth: 15 },
+        { Header: "Info", accessor: "info" },
+        { Header: "To Event", accessor: "id", Cell: d => <NavLink to={`/events/${d.value}`}><Button color="black" icon="arrow right" /></NavLink>, minWidth: 10}
     ];
 
     const search = ({ page, pageSize }) => {
@@ -25,7 +25,7 @@ const EventList = ({ loading, events, pages, searchParams, getEvents }) => {
             columns={columns}
             data={events}
             onFetchData={search}
-            keyField="Event.id"
+            keyField="id"
             loading={loading}                
             pages={pages}
         />

@@ -12,7 +12,10 @@ const routes = [
     { path: "/login", component: () => import("auth/login") },
     { path: "/logout", component: () => import("auth/logout") },
     { path: "/attributes", component: () => import("attributes/index") },
-    { path: "/events", component: () => import("events/index") },
+    { prefix: "/events", components: [
+        { path: "/", component: () => import("events/index") },
+        { path: "/create", component: () => import("events/new") }
+    ]},
     { path: "/events/:id", component: () => import("events/view") }
 ];
 

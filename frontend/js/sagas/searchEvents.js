@@ -5,11 +5,10 @@ import { SEARCH_EVENTS, START_EVENT_SEARCH, RECV_EVENT_SEARCH } from "actions/ev
 function* searchEvents({data}) {
     const searchParams = Object.assign({}, data, {returnFormat: "json"});
     yield put({type: START_EVENT_SEARCH, data: searchParams});
-    const response = yield post("/events/restSearch", searchParams);
-    const resultCount = response.headers.get("X-result-count");
+    const response = yield post("/v2/events/search/", searchParams);
+    const numPages = response.headers.get("X-Page-Count");
     const json = yield response.json();
-    const numPages = Math.ceil(resultCount / searchParams.limit);
-    yield put({type: RECV_EVENT_SEARCH, events: json.response, pages: numPages });
+    yield put({type: RECV_EVENT_SEARCH, events: json, pages: numPages });
 }
 
 export default function* watchEventSearch(test) {

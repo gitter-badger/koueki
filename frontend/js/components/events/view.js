@@ -6,14 +6,14 @@ import { LocalAttributeList } from "attributes/list";
 
 class ViewEvent extends React.Component {
     componentDidMount() {
-        this.props.searchEvents({ eventid: this.props.match.params.id });
+        this.props.searchEvents({ id: this.props.match.params.id });
     }
 
     render() {
         const { events, loading } = this.props;
         if (loading) return "loading...";
 
-        const event = events[0].Event;
+        const event = events[0];
 
         return (
             <Segment inverted>

@@ -8,25 +8,18 @@ import { NavLink } from "react-router-dom";
 
 const Home = () => (
     <section>
-        <RequireLoginStatus status={false}>
-            <Header as={"h2"} inverted>Welcome to Koueki</Header>
-            <blockquote>公益, public benefit</blockquote>
+      <Header as={"h2"} inverted>Welcome to Koueki</Header>
+      <blockquote>公益, public benefit</blockquote>
 
-            <Container text>
-                Koueki is a lightweight malware information sharing
-                server using <a href="https://github.com/MISP/misp-rfc" target="_blank">
-                MISP's data format</a>
-            </Container>
+      <Container text>
+          Koueki is a lightweight malware information sharing
+          server using <a href="https://github.com/MISP/misp-rfc" target="_blank">
+          MISP's data format</a>
+      </Container>
 
-            <Container text>
-               To get started, <NavLink to="/login">Login</NavLink>
-            </Container>
-        </RequireLoginStatus>
-
-        <RequireLoginStatus status={true}>
-            <AttributeSearch />
-            <AttributeList />
-        </RequireLoginStatus>
+      <Container text>
+         To get started, <NavLink to="/login">Login</NavLink>
+      </Container>
     </section>
 );
 
