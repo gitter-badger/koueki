@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { post, splitLines } from "utils";
 import { toast } from "react-toastify";
 import { withRouter } from "react-router-dom";
+import { format_error } from "utils";
 
 class CreateAttribute extends React.PureComponent {
     state = {
@@ -22,12 +23,13 @@ class CreateAttribute extends React.PureComponent {
         }));
 
         let resp = await post(`/v2/events/${id}/attributes/`, toAdd);
+        let json = await resp.json();
         if (resp.status == 201) {
-            let json = await resp.json();
             toast.success(`Added ${json.length} attributes`);
             this.props.history.push(`/web/events/${id}`);
         } else {
             toast.error(`Server says: ${resp.status}`);
+            toast.error(format_error(resp));
         }
     }
 

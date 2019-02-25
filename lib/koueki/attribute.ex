@@ -98,5 +98,4 @@ defmodule Koueki.Attribute do
   end
 
   defp validate_to_ids(%Changeset{changes: %{}} = changeset), do: changeset
-
 end

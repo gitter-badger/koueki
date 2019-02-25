@@ -31,6 +31,19 @@ defmodule KouekiWeb.EventView do
     }
   end
 
+  def render("event.shallow.json", %{event: event}) do
+    %{
+      id: event.id,
+      uuid: event.uuid,
+      published: event.published,
+      info: event.info,
+      threat_level_id: event.threat_level_id,
+      analysis: event.analysis,
+      date: to_string(event.date),
+      distribution: event.distribution
+    }
+  end
+
   def render("event.misp.json", %{event: event}) do
     %{
       Event: %{

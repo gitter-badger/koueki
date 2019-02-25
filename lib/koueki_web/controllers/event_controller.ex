@@ -52,6 +52,24 @@ defmodule KouekiWeb.EventsController do
   end
 
   @doc """
+  The PATCH method - should edit the event in the specified fields
+  """
+  def edit(conn, %{"id" => id} = params, opts \\ [as: "event.shallow.json"]) do
+    with %Event{} = event <- Event.get_with_preload(id, [:org]) do
+      changeset = Event.edit_changeset(event, params)
+
+      if changeset.valid? do
+        {:ok, event} = Repo.update(changeset)
+
+        conn
+        |> json(EventView.render(opts[:as], %{event: event}))
+      else
+        Status.validation_error(conn, changeset)
+      end
+    end
+  end
+
+  @doc """
   Add one or many attributes to an event
 
   If you post a raw JSON array, phoenix will cast to to the _json parameter
@@ -67,29 +85,36 @@ defmodule KouekiWeb.EventsController do
       |> Enum.split_with(fn %Ecto.Changeset{} = changeset -> changeset.valid? end)
       |> case do
         {valid_attributes, []} ->
-          {:ok, transaction} =
-            valid_attributes
-            |> Enum.uniq_by(fn attr ->
-              {attr.changes.category, attr.changes.type, attr.changes.value}
-            end)
-            |> Enum.reduce(
-              Ecto.Multi.new(),
-              fn attr, transaction ->
-                # This is dirty but actually ensures uniqueness pre-DB
-                key = "#{attr.changes.category}.#{attr.changes.type}.#{attr.changes.value}"
+          valid_attributes
+          |> Enum.uniq_by(fn attr ->
+            {attr.changes.category, attr.changes.type, attr.changes.value}
+          end)
+          |> Enum.reduce(
+            Ecto.Multi.new(),
+            fn attr, transaction ->
+              # This is dirty but actually ensures uniqueness pre-DB
+              key = "#{attr.changes.category}.#{attr.changes.type}.#{attr.changes.value}"
 
-                Ecto.Multi.insert(
-                  transaction,
-                  key,
-                  attr
-                )
-              end
-            )
-            |> Repo.transaction()
+              Ecto.Multi.insert(
+                transaction,
+                key,
+                attr
+              )
+            end
+          )
+          |> Repo.transaction()
+          |> case do
+            {:ok, transaction} ->
+              conn
+              |> put_status(201)
+              |> json(AttributeView.render(opts[:as], %{attributes: Map.values(transaction)}))
 
-          conn
-          |> put_status(201)
-          |> json(AttributeView.render(opts[:as], %{attributes: Map.values(transaction)}))
+            {:error, reason, changeset, _} ->
+              Status.validation_error(conn, changeset)
+
+            out ->
+              IO.inspect(out)
+          end
 
         {_, invalid_attributes} ->
           Status.validation_error(conn, invalid_attributes)
@@ -124,6 +149,7 @@ defmodule KouekiWeb.EventsController do
 
   def search(conn, params) do
     {entries, page_count} = Event.search(params)
+
     conn
     |> put_resp_header("X-Page-Count", to_string(page_count))
     |> json(EventView.render("events.json", %{events: entries}))

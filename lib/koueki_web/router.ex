@@ -65,8 +65,9 @@ defmodule KouekiWeb.Router do
   scope "/v2", KouekiWeb do
     pipe_through :authenticated_api
 
-    get "/events/:id", EventsController, :view
     post "/events", EventsController, :create
+    get "/events/:id", EventsController, :view
+    patch "/events/:id", EventsController, :edit
     get "/events/:id/attributes", EventsController, :get_attributes
     post "/events/:id/attributes", EventsController, :add_attribute
     post "/events/search", EventsController, :search

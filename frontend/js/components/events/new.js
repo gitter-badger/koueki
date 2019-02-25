@@ -3,6 +3,7 @@ import { Form } from "semantic-ui-react";
 import { post, format_error } from "utils";
 import moment from "moment";
 import { toast } from "react-toastify";
+import EventForm from "events/form";
 
 export default class NewEvent extends React.PureComponent {
   state = {
@@ -28,55 +29,11 @@ export default class NewEvent extends React.PureComponent {
 
   render() {
     return (
-      <Form inverted>
-        <Form.Input
-          name="info"
-          label="Info"
-          onChange={this.onChange}
-          value={this.state.info}
-        />
-
-        <Form.Input
-          type="date"
-          name="date"
-          label="Date"
-          value={this.state.date}
-          onChange={this.onChange}       
-        />
-
-        <Form.Group widths={3}>
-          <Form.Dropdown
-            name="threat_level_id"
-            value={this.state.threat_level_id}
-            label="Threat Level"
-            options={[
-              {text: "High", value: 1},
-              {text: "Medium", value: 2},
-              {text: "Low", value: 3},
-              {text: "Unknown", value: 4}
-            ]}
+        <EventForm
+            value={this.state}
             onChange={this.onChange}
-          />
-
-          <Form.Dropdown
-            name="analysis"
-            value={this.state.analysis}
-            label="Analysis"
-            options={[
-              {text: "Initial", value: 0},
-              {text: "Ongoing", value: 1},
-              {text: "Complete", value: 2}
-            ]}
-            onChange={this.onChange}
-          />
-        </Form.Group>
-
-        <Form.Button
-          color="grey"
-          content="Create Event"
-          onClick={this.submit}
-        />
-      </Form>
+            onSubmit={this.submit}
+        />            
     );
   } 
 }

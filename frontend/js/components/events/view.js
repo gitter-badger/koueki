@@ -6,6 +6,8 @@ import { LocalAttributeList } from "attributes/list";
 import { NavLink } from "react-router-dom";
 import { analysisToText, analysisToColour, threatLevelToText, threatLevelToColour } from "utils";
 import Org from "orgs/inline";
+import EditEvent from "events/edit";
+
 
 class ViewEvent extends React.Component {
     componentDidMount() {
@@ -25,6 +27,8 @@ class ViewEvent extends React.Component {
                 <Header as="h4">
                     Created by <Org org={event.org} />
                 </Header>
+
+                <EditEvent event={event} />
 
                 <Label.Group>
                     <Label color={event.published?"green":"red"}

@@ -64,6 +64,15 @@ defmodule Koueki.Event do
     )
   end
 
+  defp validate(changeset) do
+    changeset
+    |> validate_required([:info])
+    |> validate_inclusion(:threat_level_id, 1..4)
+    |> validate_inclusion(:analysis, 0..2)
+    |> validate_inclusion(:distribution, 0..4)
+    |> validate_date()
+  end
+
   def changeset(struct, params) do
     struct
     |> cast(params, [
@@ -77,11 +86,21 @@ defmodule Koueki.Event do
     ])
     |> cast_assoc(:attributes, with: &Attribute.changeset/2)
     |> put_assoc(:tags, Tag.find_or_create(Map.get(params, "tags", [])))
-    |> validate_required([:info])
-    |> validate_inclusion(:threat_level_id, 1..4)
-    |> validate_inclusion(:analysis, 0..2)
-    |> validate_inclusion(:distribution, 0..4)
-    |> validate_date()
+    |> validate()
+  end
+
+  def edit_changeset(struct, params) do
+    struct
+    |> cast(params, [
+      :published,
+      :info,
+      :threat_level_id,
+      :analysis,
+      :date,
+      :distribution,
+      :org_id
+    ])
+    |> validate()
   end
 
   defp validate_date(%Changeset{changes: %{date: date}} = changeset) do
@@ -96,9 +115,10 @@ defmodule Koueki.Event do
   def search(params) do
     page =
       from(event in Event,
-           left_join: attributes in assoc(event, :attributes),
-           left_join: attr_tags in assoc(attributes, :tags),
-           preload: [:org, :tags, attributes: {attributes, tags: attr_tags}])
+        left_join: attributes in assoc(event, :attributes),
+        left_join: attr_tags in assoc(attributes, :tags),
+        preload: [:org, :tags, attributes: {attributes, tags: attr_tags}]
+      )
       |> limit_id(params)
       |> order_by(desc: :id)
       |> Repo.paginate(
@@ -114,5 +134,4 @@ defmodule Koueki.Event do
   end
 
   defp limit_id(query, _), do: query
-    
 end
