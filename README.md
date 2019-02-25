@@ -20,6 +20,8 @@ set of features from MISP, and slowly build from there.
 ## Installation
 
 For a quick setup, simply run `docker-compose up` from the `docker` directory.
+This will create a new user with credentials "koueki / admin", although this can
+be changed in the `docker-compose.yml` file
 
 to install on a bare system:
 
