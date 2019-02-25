@@ -1,54 +1,91 @@
 # Koueki
 
-*公益, the public good*
+*公益, for the public benefit*
 
 Good security comes with transparency, not walled gardens and paywalls.
 
 ## What is it?
 
 A lightweight, unrestricted threat intelligence sharing server,
-using the MISP format.
+using the MISP format. It will not consider sharing groups or
+visibility restrictions as valid and hence will not implement them.
+(However it will honour externally-created restrictions)
+
+Koueki provides consistent RESTful API alongside a PyMISP-compatible
+"legacy" API.
 
 This project will implement what I view as the minimum viable
 set of features from MISP, and slowly build from there.
 
-Notably, features I will *not* consider a part of that set are
-those that restrict sharing or visibility. Other features,
-such as the `analysis` attribute of events should be used
-to inform others of if they should act on an attribute alone.
-
-Koueki will provide a consistent API alongside a MISP-compatible
-"legacy" API.
-
-## Motivation
-
-Having been an active contributor to MISP for the past 3 years,
-I've watched the project increasingly be stifled by corporate
-interests demanding features that only they would ever use,
-and total backwards compatibility, at the expense of the
-project's consistency. 
-
-I believe the project is now too far gone to be recovered from
-the spaghetti logic demanded by such a high set of restrictions.
-
-The MISP format is currently the nicest threat sharing format
-in active use - the only viable alternative is STIX, which
-I've spent enough time with to believe is not worth pursuing.
-Additionally the adoption of MISP is high enough to be the
-de-facto indicator sharing system in Europe. Hence I want
-to use that as a base to work from - by remaining compatible
-with PyMISP pre-existing tools can be ported with nothing more
-than a URL switch.
-
-I also believe the sharing restrictions of MISP are primarily
-used to create "paid feeds" - walling off some valuable
-information behind extortionate fees. I believe the best
-way to do security is for everyone to know everything. If
-we hide potentially vital information for material gain,
-what are we even working for? Do we want a more secure world,
-or an insecure world that we can nickle and dime out of everything it
-has with flashy press releases and scare tactics? 
-
 ## Installation
 
-TODO
+Requirements
+- Elixir Runtime (see [the elixir install page](https://elixir-lang.org/install.html))
+- Postgres (in nearly all distribution repositories)
+
+Once you have these two, you'll want to set up a new postgres user
+
+```
+psql (11.1)
+
+postgres=# create user koueki with password 'make_this_complex' createdb;
+CREATE ROLE
+```
+
+Now please follow the instructions given in the [#configuration](configuration) section.
+
+Once you've done that, we can install the actual application. 
+
+**NOTE!!** When updating and running the application, *always* make sure
+`MIX_ENV` is exported (or you'll use the wrong config files)
+
+```bash
+export MIX_ENV=prod
+
+# Retrieve depencies
+mix deps.get
+
+# Create the database 
+mix ecto.create
+# Things will compile here - might take a bit
+
+# Update the schema
+mix ecto.migrate
+
+# Add your first user
+mix Koueki.User new my_user@example.com my_password
+
+# It'll make you create an organisation - don't worry,
+# this can be edited later
+
+# start up the server to make sure everything is ok
+mix phx.server
+```
+
+You can now check that everything is ok by visiting http://localhost:4000/
+
+To run as a daemon, install the systemd file located in the `doc/` directory. You'll
+probably want to route through nginx, so I've also provided a template for that.
+
+## Configuration
+
+All configuration is done in the `config/` directory.
+
+Create the file `config/prod.secret.exs`
+
+```elixir
+use Mix.Config
+
+config :koueki, Koueki.Repo,
+  username: "koueki",
+  password: "your_db_password",
+  database: "koueki_prod",
+  hostname: "localhost",
+  pool_size: 10
+
+config :koueki, :instance,
+  name: "My Koueki",
+  signup_enabled: true
+```
+
+All keys should be relatively self-explanatory.

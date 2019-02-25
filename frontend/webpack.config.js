@@ -11,6 +11,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
+const APP_ROOT = path.resolve("../")
 const BUILD_DIR = path.resolve("../priv/static");
 const APP_DIR = path.resolve("./js");
 const vars = new webpack.DefinePlugin({
@@ -48,7 +49,7 @@ const copy = new CopyWebpackPlugin([
     {from: "resources", to: "resources"}, 
 ]);
 
-const clean = new CleanWebpackPlugin("dist", {});
+const clean = new CleanWebpackPlugin("priv/static", {root: APP_ROOT});
 
 const common = {
 
