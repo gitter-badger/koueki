@@ -74,7 +74,7 @@ defmodule KouekiWeb.EventsController do
 
   If you post a raw JSON array, phoenix will cast to to the _json parameter
   """
-  def add_attribute(conn, params, opts \\ [as: "attributes.json"])
+  def add_attribute(conn, params, opts \\ [])
 
   def add_attribute(conn, %{"id" => event_id, "_json" => params}, opts)
       when is_list(params) do
@@ -107,7 +107,12 @@ defmodule KouekiWeb.EventsController do
             {:ok, transaction} ->
               conn
               |> put_status(201)
-              |> json(AttributeView.render(opts[:as], %{attributes: Map.values(transaction)}))
+              |> json(
+                AttributeView.render(
+                  Keyword.get(opts, :as, "attributes.json"),
+                  %{attributes: Map.values(transaction)}
+                )
+              )
 
             {:error, reason, changeset, _} ->
               Status.validation_error(conn, changeset)
@@ -136,7 +141,11 @@ defmodule KouekiWeb.EventsController do
           {:ok, attribute} ->
             conn
             |> put_status(201)
-            |> json(AttributeView.render(opts[:as], %{attribute: attribute}))
+            |> json(
+              AttributeView.render(Keyword.get(opts, :as, "attribute.json"), %{
+                attribute: attribute
+              })
+            )
 
           {:error, changeset} ->
             Status.validation_error(conn, changeset)
