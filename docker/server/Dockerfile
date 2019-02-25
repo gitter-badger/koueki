@@ -15,11 +15,13 @@ USER koueki
 RUN git clone https://github.com/FloatingGhost/Koueki.git /koueki
 WORKDIR /koueki
 
+ADD write_config_file.sh .
+ADD run.sh .
+
+RUN touch config/prod.secret.exs
 RUN mix local.rebar --force \
     && mix local.hex --force \
-    && mix deps.get \
-    && mix compile \
-    && mix ecto.create \
-    && mix ecto.migrate
+    && mix deps.get \\
+    && mix compile
 
-CMD ["mix", "phx.server"]
+CMD ["/bin/sh", "run.sh"]

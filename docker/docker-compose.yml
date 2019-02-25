@@ -9,10 +9,13 @@ services:
     ports:
       - "4000:4000"
     environment:
-      - POSTGRES_HOST: postgres
-      - POSTGRES_USER: koueki
-      - POSTGRES_PASSWORD: postgres
-      - MIX_ENV: prod
+      - POSTGRES_HOST=postgres
+      - POSTGRES_USER=koueki
+      - POSTGRES_PASSWORD=postgres
+      - MIX_ENV=prod
+      - INITIAL_USERNAME=koueki
+      - INITIAL_PASSWORD=admin
+      - ORG_NAME=koueki_org
 
   db:
     container_name: postgres
@@ -21,5 +24,5 @@ services:
     volumes:
       - /data/koueki/db:/var/lib/postgres/data/
     environment:
-      - POSTGRES_USER: koueki
-      - POSTGRES_PASSWORD: postgres
+      - POSTGRES_USER=koueki
+      - POSTGRES_PASSWORD=postgres
