@@ -19,6 +19,10 @@ set of features from MISP, and slowly build from there.
 
 ## Installation
 
+For a quick setup, simply run `docker-compose up` from the `docker` directory.
+
+to install on a bare system:
+
 Requirements
 - Elixir Runtime (see [the elixir install page](https://elixir-lang.org/install.html))
 - Postgres (in nearly all distribution repositories)
