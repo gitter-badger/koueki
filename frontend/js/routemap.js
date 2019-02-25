@@ -14,9 +14,10 @@ const routes = [
     { path: "/attributes", component: () => import("attributes/index") },
     { prefix: "/events", components: [
         { path: "/", component: () => import("events/index") },
-        { path: "/create", component: () => import("events/new") }
+        { path: "/create", component: () => import("events/new") },
+        { path: "/:id", component: () => import("events/view") },
+        { path: "/:id/attributes/add", component: () => import("attributes/new") }
     ]},
-    { path: "/events/:id", component: () => import("events/view") }
 ];
 
 const process_components = (components, base_route="") => {
@@ -37,6 +38,6 @@ const process_components = (components, base_route="") => {
     return flattened;
 };
 
-const async_routes = process_components(routes);
+const async_routes = process_components(routes, "/web");
 
 export default async_routes;

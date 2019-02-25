@@ -2,7 +2,8 @@ import { CHANGE_SETTINGS, RECV_LOGIN_STATUS, RECV_CONFIG } from "actions/config"
 
 const initial_state = {
     loggedIn: false,
-    attributeTypes: {}
+    types: {},
+    categories: []
 }
 
 const config = (state = initial_state, action) => {

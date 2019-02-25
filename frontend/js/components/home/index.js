@@ -18,7 +18,7 @@ const Home = () => (
       </Container>
 
       <Container text>
-         To get started, <NavLink to="/login">Login</NavLink>
+         To get started, <NavLink to="/web/login">Login</NavLink>
       </Container>
     </section>
 );

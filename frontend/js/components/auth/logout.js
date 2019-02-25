@@ -12,7 +12,7 @@ class Logout extends React.Component {
     this.props.setLoginStatus(false);
     await post("/auth/logout");
     toast.success("Logged out");
-    this.props.history.push("/");
+    this.props.history.push("/web/");
   }
 
   render() {

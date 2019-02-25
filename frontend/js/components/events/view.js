@@ -1,8 +1,11 @@
 import React from "react";
 import { connect } from "react-redux";
 import { SEARCH_EVENTS } from "actions/events";
-import { Header, Segment, Statistic, Label } from "semantic-ui-react";
+import { Header, Segment, Statistic, Label, Button } from "semantic-ui-react";
 import { LocalAttributeList } from "attributes/list";
+import { NavLink } from "react-router-dom";
+import { analysisToText, analysisToColour, threatLevelToText, threatLevelToColour } from "utils";
+import Org from "orgs/inline";
 
 class ViewEvent extends React.Component {
     componentDidMount() {
@@ -19,17 +22,29 @@ class ViewEvent extends React.Component {
             <Segment inverted>
                 <Header as="h1">Event {event.id}: {event.info}</Header>
 
-                <Label color={event.published?"green":"red"}
-                    content={event.published?"Published":"Unpublished"}
-                />
+                <Header as="h4">
+                    Created by <Org org={event.org} />
+                </Header>
 
-                <Statistic.Group inverted size="small">
-                    <Statistic label="Attributes" value={event.attribute_count} />
-                    <Statistic label="Analysis" value={event.analysis} />
-                    <Statistic label="Threat Level" value={event.threat_level_id} />
-                </Statistic.Group>
+                <Label.Group>
+                    <Label color={event.published?"green":"red"}
+                        content={event.published?"Published":"Unpublished"}
+                    />
+                    <Label color={analysisToColour(event.analysis)}
+                        content="Analysis"
+                        detail={analysisToText(event.analysis)}
+                    />
+                    <Label color={threatLevelToColour(event.threat_level_id)}
+                        content="Threat Level"
+                        detail={threatLevelToText(event.threat_level_id)}
+                    />
+                </Label.Group>
 
-                <LocalAttributeList attributes={event.Attribute} />
+
+                <NavLink to={`${this.props.match.url}/attributes/add`}>
+                    <Button content="Add attributes" icon="add" color="black"/>
+                </NavLink>
+                <LocalAttributeList attributes={event.attributes} />
             </Segment>
         );
     }

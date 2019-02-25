@@ -5,4 +5,9 @@ defmodule KouekiWeb.AttributeController do
     conn
     |> json(Koueki.Attribute.Type.types())
   end
+
+  def describe_categories(conn, _) do
+    conn
+    |> json(Koueki.Attribute.Category.categories())
+  end
 end

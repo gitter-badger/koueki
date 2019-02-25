@@ -17,23 +17,18 @@ defmodule KouekiWeb.EventsController do
     AttributeView
   }
 
-  def view(conn, %{"id" => id}, opts \\ []) do
+  def view(conn, %{"id" => id}, opts \\ [as: "event.json"]) do
     with %Event{} = event <- Repo.get(Event, id) do
       event = Event.load_assoc(event)
 
       conn
-      |> json(
-        EventView.render(
-          Keyword.get(opts, :as, "event.json"),
-          %{event: event}
-        )
-      )
+      |> json(EventView.render(opts[:as], %{event: event}))
     else
       _ -> Status.not_found(conn, "Event #{id} not found")
     end
   end
 
-  def create(conn, %{} = params, opts \\ []) do
+  def create(conn, %{} = params, opts \\ [as: "event.json"]) do
     user = Utils.get_user(conn)
     params = Map.put(params, "org_id", user.org_id)
 
@@ -45,7 +40,7 @@ defmodule KouekiWeb.EventsController do
 
         conn
         |> put_status(201)
-        |> json(EventView.render(Keyword.get(opts, :as, "event.json"), %{event: event}))
+        |> json(EventView.render(opts[:as], %{event: event}))
       else
         err ->
           IO.inspect(err)
@@ -61,7 +56,7 @@ defmodule KouekiWeb.EventsController do
 
   If you post a raw JSON array, phoenix will cast to to the _json parameter
   """
-  def add_attribute(conn, params, opts \\ [])
+  def add_attribute(conn, params, opts \\ [as: "attributes.json"])
 
   def add_attribute(conn, %{"id" => event_id, "_json" => params}, opts)
       when is_list(params) do
@@ -94,12 +89,7 @@ defmodule KouekiWeb.EventsController do
 
           conn
           |> put_status(201)
-          |> json(
-            AttributeView.render(
-              Keyword.get(opts, :as, "attributes.json"),
-              %{attributes: Map.values(transaction)}
-            )
-          )
+          |> json(AttributeView.render(opts[:as], %{attributes: Map.values(transaction)}))
 
         {_, invalid_attributes} ->
           Status.validation_error(conn, invalid_attributes)
@@ -121,12 +111,7 @@ defmodule KouekiWeb.EventsController do
           {:ok, attribute} ->
             conn
             |> put_status(201)
-            |> json(
-              AttributeView.render(
-                Keyword.get(opts, :as, "attribute.json"),
-                %{attribute: attribute}
-              )
-            )
+            |> json(AttributeView.render(opts[:as], %{attribute: attribute}))
 
           {:error, changeset} ->
             Status.validation_error(conn, changeset)
@@ -142,5 +127,12 @@ defmodule KouekiWeb.EventsController do
     conn
     |> put_resp_header("X-Page-Count", to_string(page_count))
     |> json(EventView.render("events.json", %{events: entries}))
+  end
+
+  def get_attributes(conn, %{"id" => id}, opts \\ [as: "attributes.json"]) do
+    attributes = Repo.all(from attribute in Attribute, where: attribute.event_id == ^id)
+
+    conn
+    |> json(AttributeView.render(opts[:as], %{attributes: attributes}))
   end
 end

@@ -25,7 +25,7 @@ class LoginForm extends React.PureComponent {
     } else {
       toast.success("Logged in");
       this.props.setLoginStatus(true); 
-      this.props.history.push("/");
+      this.props.history.push("/web/");
     }
   }
 

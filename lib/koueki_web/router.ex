@@ -22,7 +22,12 @@ defmodule KouekiWeb.Router do
 
   scope "/", KouekiWeb do
     pipe_through :browser
-    get "/", PageController, :index
+    get "/", PageController, :redirect_to_web
+  end
+
+  scope "/web", KouekiWeb do
+    pipe_through :browser
+    get "/*path", PageController, :index
   end
 
   scope "/instance", KouekiWeb do
@@ -62,18 +67,16 @@ defmodule KouekiWeb.Router do
 
     get "/events/:id", EventsController, :view
     post "/events", EventsController, :create
-    post "/events/:id/attributes/", EventsController, :add_attribute
+    get "/events/:id/attributes", EventsController, :get_attributes
+    post "/events/:id/attributes", EventsController, :add_attribute
     post "/events/search", EventsController, :search
 
     get "/attributes/types", AttributeController, :describe_types
+    get "/attributes/categories", AttributeController, :describe_categories
 
     get "/tags/:id", TagController, :view
     post "/tags", TagController, :create
   end
 
   # Fallback
-  scope "/", KouekiWeb do
-    pipe_through :browser
-    get "/*path", PageController, :index
-  end
 end

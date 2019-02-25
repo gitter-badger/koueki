@@ -8,6 +8,12 @@ function* configGetter() {
         let resp = yield call(get, "/instance/config");
         let json = yield resp.json();
         yield put({type: RECV_CONFIG, data: json});
+        resp = yield call(get, "/v2/attributes/types/");
+        json = yield resp.json();
+        yield put({type: RECV_CONFIG, data: { types: json }});
+        resp = yield call(get, "/v2/attributes/categories/");
+        json = yield resp.json();
+        yield put({type: RECV_CONFIG, data: { categories: json }});
     } catch (e) {
         console.error(e);
         toast.error("There was an error retrieving config");

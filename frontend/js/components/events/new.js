@@ -19,7 +19,7 @@ export default class NewEvent extends React.PureComponent {
     let json = await resp.json();
     if (resp.status == 201) {
       toast.success(`Event ${json.id} created, redirecting...`);
-      this.props.history.push(`/events/${json.id}`);
+      this.props.history.push(`/web/events/${json.id}`);
     } else {
       toast.error(`Server says: ${resp.status}`);
       toast.error(format_error(json));

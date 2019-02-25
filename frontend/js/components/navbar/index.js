@@ -11,15 +11,15 @@ class NavBar extends React.Component {
     render() {
 
         const centralNav = [
-            { name: "Events", link: "/events" },
-            { name: "Attributes", link: "/attributes" }
+            { name: "Events", link: "/web/events" },
+            { name: "Attributes", link: "/web/attributes" }
         ];
 
         return (
             <Menu borderless inverted stackable>
                 <Menu.Item>
                     <NavLink
-                        to="/"
+                        to="/web/"
                     >
                       <h2>公益</h2>
                     </NavLink>
@@ -37,10 +37,10 @@ class NavBar extends React.Component {
                 <Menu.Menu position="right">
                   <Menu.Item>
                     <RequireLoginStatus status={false}>
-                      <NavLink to="/login">Login</NavLink>  
+                      <NavLink to="/web/login">Login</NavLink>  
                     </RequireLoginStatus>
                     <RequireLoginStatus status={true}>
-                      <NavLink to="/logout">Logout</NavLink>  
+                      <NavLink to="/web/logout">Logout</NavLink>  
                     </RequireLoginStatus>
                   </Menu.Item>
                 </Menu.Menu>
