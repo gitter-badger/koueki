@@ -10,22 +10,22 @@
 - Attribute
     - [x] Create
     - [x] Read
-    - [] Update
-    - [] Delete
+    - [ ] Update
+    - [ ] Delete
     - [x] Search
 
 - Tag
     - [x] Create
-    - [] Read
-    - [] Update
-    - [] Delete
+    - [ ] Read
+    - [ ] Update
+    - [ ] Delete
     - [x] Search
 
 - Org
-    - [] Create
-    - [] Read
-    - [] Update
-    - [] Delete
+    - [ ] Create
+    - [ ] Read
+    - [ ] Update
+    - [ ] Delete
 
 # Frontend Support
 
@@ -39,19 +39,19 @@
 - Attribute
     - [x] Create
     - [x] Read
-    - [] Update
-    - [] Delete
+    - [ ] Update
+    - [ ] Delete
     - [x] Search
          
 - Tag    
-    - [] Create
-    - [] Read
-    - [] Update
-    - [] Delete
-    - [] Search
+    - [ ] Create
+    - [ ] Read
+    - [ ] Update
+    - [ ] Delete
+    - [ ] Search
 
 - Org
-    - [] Create
-    - [] Read
-    - [] Update
-    - [] Delete
+    - [ ] Create
+    - [ ] Read
+    - [ ] Update
+    - [ ] Delete
