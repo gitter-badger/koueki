@@ -81,6 +81,17 @@ mix ecto.create
 mix ecto.migrate
 ```
 
+### Adding your first user
+
+```bash
+mix Koueki.Org new "my organisation"
+# Look at the ID of the org it created
+mix Koueki.User new --orgid the_id
+```
+
+This will generate a new user and organisation, and give you a temporary password
+to log in.
+
 ## Updating
 
 If Koueki is updated, simply run a `git pull` on the repository and run
