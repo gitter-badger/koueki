@@ -1,9 +1,8 @@
 defmodule Koueki.User do
   use Ecto.Schema
-  import Ecto.Query
   import Ecto.Changeset
 
-  alias Koueki.{User, Repo}
+  alias Koueki.{User}
 
   schema "users" do
     field :email, :string

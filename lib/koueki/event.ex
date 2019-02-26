@@ -103,7 +103,7 @@ defmodule Koueki.Event do
     |> validate()
   end
 
-  defp validate_date(%Changeset{changes: %{date: date}} = changeset) do
+  defp validate_date(%Changeset{changes: %{date: _}} = changeset) do
     changeset
   end
 

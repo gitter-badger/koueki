@@ -16,7 +16,7 @@ class ViewEvent extends React.Component {
 
     render() {
         const { events, loading } = this.props;
-        if (loading) return "loading...";
+        if (loading || events.length == 0) return "loading...";
 
         const event = events[0];
 

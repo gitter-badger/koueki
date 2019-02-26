@@ -17,6 +17,11 @@ Koueki provides consistent RESTful API alongside a PyMISP-compatible
 This project will implement what I view as the minimum viable
 set of features from MISP, and slowly build from there.
 
+Koueki aims to do *one thing* and *one thing well*. It will not offer all
+of the bells and whistles of MISP - none of this "export in every 
+format under the sun" - Koueki stores events, and attributes to those events
+and nothing more.
+
 ## Installation
 
 You can either set up Koueki as a docker service or as a bare process on a server

@@ -1,7 +1,6 @@
 defmodule Mix.Tasks.Koueki.User do
   use Mix.Task
-  import Mix.Ecto
-  import Ecto.Changeset
+
   alias Mix.Tasks.Koueki.Common
   alias Koueki.{User, Repo, Org}
 
@@ -39,7 +38,7 @@ defmodule Mix.Tasks.Koueki.User do
         exit({:shutdown, 1})
     end
 
-    with %Org{} = org do
+    with %Org{} <- org do
       user = User.changeset(%User{}, %{email: email, password: password, org_id: org.id})
 
       if user.valid? do
@@ -63,7 +62,7 @@ defmodule Mix.Tasks.Koueki.User do
 
   def run(["exists", email]) do
     Common.start_koueki()
-    with %User{} = user <- Repo.get_by(User, email: email) do
+    with %User{} <- Repo.get_by(User, email: email) do
       Mix.shell().info("User #{email} exists!")
       exit({:shutdown, 0})
     else

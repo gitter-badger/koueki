@@ -12,7 +12,6 @@ defmodule KouekiWeb.EventsController do
   alias KouekiWeb.{
     EventView,
     Status,
-    User,
     Utils,
     AttributeView
   }
@@ -78,7 +77,7 @@ defmodule KouekiWeb.EventsController do
 
   def add_attribute(conn, %{"id" => event_id, "_json" => params}, opts)
       when is_list(params) do
-    with %Event{} = event <- Repo.get(Event, event_id),
+    with %Event{} <- Repo.get(Event, event_id),
          {event_id, ""} <- Integer.parse(event_id) do
       params
       |> Stream.map(&Attribute.changeset(%Attribute{event_id: event_id}, &1))
@@ -114,7 +113,7 @@ defmodule KouekiWeb.EventsController do
                 )
               )
 
-            {:error, reason, changeset, _} ->
+            {:error, _, changeset, _} ->
               Status.validation_error(conn, changeset)
 
             out ->
@@ -133,7 +132,7 @@ defmodule KouekiWeb.EventsController do
     # In the case that we get a single object,
     # We don't want to just return an array by using our other function,
     # we want to return the created object. Luckily this is quite easy.
-    with %Event{} = event <- Repo.get(Event, event_id) do
+    with %Event{} <- Repo.get(Event, event_id) do
       changeset = Attribute.changeset(%Attribute{}, params)
 
       if changeset.valid? do
@@ -153,6 +152,16 @@ defmodule KouekiWeb.EventsController do
       else
         Status.validation_error(conn, changeset)
       end
+    end
+  end
+
+  def delete(conn, %{"id" => id}) do
+    with %Event{} = event <- Repo.get(Event, id),
+         {:ok, _} <- Repo.delete(event) do
+      json(conn, %{deleted: true})
+    else
+      nil -> Status.not_found(conn, "Event #{id} not found")
+      e -> IO.inspect e
     end
   end
 

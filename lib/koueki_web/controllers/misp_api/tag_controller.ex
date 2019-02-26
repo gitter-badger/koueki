@@ -1,7 +1,6 @@
 defmodule KouekiWeb.MISPAPI.TagController do
   use KouekiWeb, :controller
   import Ecto.Query
-  import Ecto.Changeset
 
   alias Ecto.Changeset
 
@@ -13,11 +12,8 @@ defmodule KouekiWeb.MISPAPI.TagController do
   }
 
   alias KouekiWeb.{
-    MISPAPI,
     TagController,
     Status,
-    EventView,
-    AttributeView
   }
 
   def view(conn, params) do

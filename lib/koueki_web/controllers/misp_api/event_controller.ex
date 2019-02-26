@@ -4,17 +4,11 @@ defmodule KouekiWeb.MISPAPI.EventsController do
   alias Koueki.{
     Event,
     Attribute,
-    Repo
   }
 
   alias KouekiWeb.{
-    MISPAPI,
-    EventsController,
-    AttributeView,
-    Status
+    EventsController
   }
-
-  alias Ecto.Changeset
 
   def view(conn, params) do
     EventsController.view(conn, params, as: "event.misp.json")

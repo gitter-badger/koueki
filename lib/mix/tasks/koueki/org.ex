@@ -1,9 +1,7 @@
 defmodule Mix.Tasks.Koueki.Org do
   use Mix.Task
-  import Mix.Ecto
-  import Ecto.Changeset
   alias Mix.Tasks.Koueki.Common
-  alias Koueki.{User, Repo, Org}
+  alias Koueki.{Repo, Org}
 
   def run(["new", name | rest]) do
     Common.start_koueki()

@@ -1,14 +1,8 @@
 defmodule KouekiWeb.EventView do
   use KouekiWeb, :view
 
-  alias Koueki.{
-    Event
-  }
-
   alias KouekiWeb.{
-    OrgView,
-    AttributeView,
-    TagView
+    OrgView
   }
 
   def render("events.json", %{events: events}) do

@@ -91,6 +91,30 @@ defmodule KouekiWeb.EventsTest do
            } = json_response(conn, 201)
   end
 
+  test "PATCH /v2/events/:id", %{conn: conn} do
+    user = insert(:user)
+    event = insert(:event)
+
+    conn =
+      conn
+      |> assign(:user, user)
+      |> patch("/v2/events/#{event.id}", %{info: "updated!"})
+
+    assert %{"info" => "updated!"} = json_response(conn, 200) 
+  end
+
+  test "DELETE /v2/events/:id", %{conn: conn} do
+    user = insert(:user)
+    event = insert(:event)
+
+    conn = 
+      conn
+      |> assign(:user, user)
+      |> delete("/v2/events/#{event.id}")
+
+    assert %{"deleted" => true} = json_response(conn, 200)
+  end
+
   test "POST /v2/events/:id/attributes/", %{conn: conn} do
     user = insert(:user)
     event = insert(:event)
