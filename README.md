@@ -4,6 +4,8 @@
 
 Good security comes with transparency, not walled gardens.
 
+[![Build Status](https://travis-ci.org/FloatingGhost/Koueki.svg?branch=master)](https://travis-ci.org/FloatingGhost/Koueki)
+
 ## What is it?
 
 A lightweight, unrestricted threat intelligence sharing server,
