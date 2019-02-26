@@ -7,6 +7,7 @@ import { NavLink } from "react-router-dom";
 import { analysisToText, analysisToColour, threatLevelToText, threatLevelToColour } from "utils";
 import Org from "orgs/inline";
 import EditEvent from "events/edit";
+import DeleteEvent from "events/delete";
 
 
 class ViewEvent extends React.Component {
@@ -28,7 +29,13 @@ class ViewEvent extends React.Component {
                     Created by <Org org={event.org} />
                 </Header>
 
-                <EditEvent event={event} />
+                <Button.Group color="grey">
+                    <NavLink to={`${this.props.match.url}/attributes/add`}>
+                        <Button content="Add attributes" icon="add" color="grey"/>
+                    </NavLink>
+                    <EditEvent event={event} />
+                    <DeleteEvent event={event} />
+                </Button.Group>
 
                 <Label.Group>
                     <Label color={event.published?"green":"red"}
@@ -45,9 +52,6 @@ class ViewEvent extends React.Component {
                 </Label.Group>
 
 
-                <NavLink to={`${this.props.match.url}/attributes/add`}>
-                    <Button content="Add attributes" icon="add" color="black"/>
-                </NavLink>
                 <LocalAttributeList attributes={event.attributes} />
             </Segment>
         );

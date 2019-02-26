@@ -76,8 +76,8 @@ class CreateAttribute extends React.PureComponent {
                         }                
                     />
                 </Form.Group>
-                <Form.Button color="black" fluid onClick={this.submit} type="button"
-                    content="Submit" icon="add" />
+                <Form.Button fluid onClick={this.submit} type="button"
+                    content="Submit" icon="add" color="grey" />
             </Form>
         );
     }

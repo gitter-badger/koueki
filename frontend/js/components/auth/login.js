@@ -25,7 +25,7 @@ class LoginForm extends React.PureComponent {
     } else {
       toast.success("Logged in");
       this.props.setLoginStatus(true); 
-      this.props.history.push("/web/");
+      this.props.history.push("/web/events/");
     }
   }
 
@@ -46,7 +46,7 @@ class LoginForm extends React.PureComponent {
         />
 
         <Form.Button
-          color="black"
+          color="grey"
           content="Submit"
           onClick={this.submit}
         />

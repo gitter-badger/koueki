@@ -28,6 +28,7 @@ const ParameterInput = ({ name, type, value, onChange, ...props }) => {
         default: 
             return <Form.Input 
                 value={value} label={name} name={name} onChange={onChange} 
+                placeholder={`Use % for wildcard matches`}
                 {...props}
             />;
     }
@@ -71,8 +72,8 @@ const SearchInput = ({ parameters, value, onChange }) => {
                         <Form.Button
                             type="button"
                             fluid
-                            color="black"
-                            style={{marginTop: "1.5rem"}}
+                            color="grey"
+                            style={{marginTop: "1.6rem"}}
                             content="Remove"
                             icon="delete"
                             onClick={(e) => removeParam(e, key)}

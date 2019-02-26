@@ -120,6 +120,7 @@ defmodule Koueki.Event do
         preload: [:org, :tags, attributes: {attributes, tags: attr_tags}]
       )
       |> limit_id(params)
+      |> limit_info(params)
       |> order_by(desc: :id)
       |> Repo.paginate(
         page: Map.get(params, "page", 0),
@@ -134,4 +135,10 @@ defmodule Koueki.Event do
   end
 
   defp limit_id(query, _), do: query
+
+  defp limit_info(query, %{"info" => info}) do
+    from(event in query, where: like(event.info, ^info))
+  end
+
+  defp limit_info(query, _), do: query
 end

@@ -19,7 +19,7 @@ const RemoteAttributeList = ({ loading, attributes, pages, searchParams, searchA
     const toEvent = {
         Header: "To Event", accessor: "event_id",
         Cell: d => <NavLink to={`/web/events/${d.value}`}>
-            <Button icon="arrow right" color="black"/>
+            <Button icon="arrow right" color="grey" />
         </NavLink>, minWidth: 20
     };
 

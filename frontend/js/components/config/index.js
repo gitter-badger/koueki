@@ -51,6 +51,7 @@ class Config extends React.Component {
                         <Form.Button
                             content="Submit"
                             onClick={this.submit}
+                            inverted  
                             color="grey"
                         />
                     </Form>

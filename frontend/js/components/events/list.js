@@ -11,7 +11,7 @@ const EventList = ({ loading, events, pages, searchParams, getEvents }) => {
         { Header: "ID", accessor: "id", minWidth: 10 },
         { Header: "Date", accessor: "date", minWidth: 15 },
         { Header: "Info", accessor: "info" },
-        { Header: "To Event", accessor: "id", Cell: d => <NavLink to={`/web/events/${d.value}`}><Button color="black" icon="arrow right" /></NavLink>, minWidth: 10}
+        { Header: "To Event", accessor: "id", Cell: d => <NavLink to={`/web/events/${d.value}`}><Button icon="arrow right" color="grey" /></NavLink>, minWidth: 10}
     ];
 
     const search = ({ page, pageSize }) => {

@@ -37,10 +37,10 @@ class EditEvent extends React.Component {
             onClose={() => this.setState({open: false})}
             closeIcon
             trigger={<Button
+                color="grey"
                 onClick={() => this.setState({open: true})}
                 content="Edit event"
                 icon="edit"
-                color="black"
             />}
         >
             <Modal.Content>

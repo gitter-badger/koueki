@@ -6,7 +6,7 @@ import SearchInput from "search/index";
 
 class EventSearch extends React.PureComponent {
     state = {
-        params: {value: ""}
+        params: {info: ""}
     }
 
     submit = () => {
@@ -15,24 +15,8 @@ class EventSearch extends React.PureComponent {
 
     render() {
         const validSearch = {
-            "value": "string",
-            "type": "attr-type",
-            "category": "attr-category",
-            "org": "string",
-            "tag": "string",
-            "tags": "string",
-            "searchall": "boolean",
-            "from": "string",
-            "to": "string",
-            "last": "string",
-            "eventid": "string",
-            "withAttachments": "boolean",
-            "metadata": "boolean",
-            "uuid": "string",
-            "published": "boolean",
-            "publish_timestamp": "string",
-            "timestamp": "string",
-            "enforceWarninglist": "boolean"
+            "id": "integer",
+            "info": "string",
         };
 
         return (
@@ -43,7 +27,7 @@ class EventSearch extends React.PureComponent {
                     onChange={(e, value) => this.setState({params: value})}
                 />
                 <Form.Button
-                    color="black"
+                    color="grey"
                     onClick={this.submit}
                     icon="search"
                     content="Search"

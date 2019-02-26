@@ -28,7 +28,7 @@ class AttributeSearch extends React.PureComponent {
                     onChange={(e, value) => this.setState({params: value})}
                 />
                 <Form.Button
-                    color="black"
+                    color="grey"
                     onClick={this.submit}
                     icon="search"
                     content="Search"

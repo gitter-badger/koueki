@@ -20,6 +20,8 @@ export const get = (url) => fetch(getURL(url), {method: "GET", ...getHeaders()})
 
 export const patch = (url, body) => fetch(getURL(url), {method: "PATCH", body: JSON.stringify(body), ...getHeaders()})
 
+export const delete_req = (url) => fetch(getURL(url), {method: "DELETE", ...getHeaders()})
+
 export const format_error = ({ error: errors }) => {
   let error_message = "";
   Object.keys(errors).forEach(key => {
