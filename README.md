@@ -2,7 +2,7 @@
 
 *公益, for the public benefit*
 
-Good security comes with transparency, not walled gardens and paywalls.
+Good security comes with transparency, not walled gardens.
 
 ## What is it?
 
@@ -19,7 +19,7 @@ set of features from MISP, and slowly build from there.
 
 Koueki aims to do *one thing* and *one thing well*. It will not offer all
 of the bells and whistles of MISP - none of this "export in every 
-format under the sun" - Koueki stores events, and attributes to those events
+format under the sun" - Koueki stores events and attributes to those events
 and nothing more.
 
 ## Installation
