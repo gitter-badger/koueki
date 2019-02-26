@@ -6,7 +6,8 @@ Create the file `config/prod.secret.exs` with the following template,
 adjust credentials as you require.
 
 If you're using the docker-compose installation method, your database
-hostname will be `postgres`.
+hostname will be `postgres`. The default postgres credentials can be
+found in the `docker-compose.yml` file.
 
 ```elixir
 use Mix.Config
