@@ -5,47 +5,49 @@ defmodule Mix.Tasks.Koueki.User do
   alias Mix.Tasks.Koueki.Common
   alias Koueki.{User, Repo, Org}
 
-  def run(["new", email, password]) do
+  def run(["new", email | rest]) do
+    {options, [], []} =
+      OptionParser.parse(rest,
+        strict: [
+          password: :string,
+          orgid: :integer
+        ]
+      )
+  
     Common.start_koueki()
 
-    org =
-      with %Org{} = org <- Repo.get_by(Org, local: true) do
-        org
+    password = case Keyword.get(options, :password) do
+      nil ->
+        :crypto.strong_rand_bytes(16) |> Base.encode64()
+      password ->
+        password
+    end
+
+    org_id = Keyword.get(options, :orgid, 1)
+
+    with %Org{} = org <- Repo.get(Org, org_id) do
+      user = User.changeset(%User{}, %{email: email, password: password, org_id: org.id})
+
+      if user.valid? do
+        {:ok, user} = Repo.insert(user)
+
+        Mix.shell().info("""
+        User created:
+          email address: #{user.email}
+          apikey: #{user.apikey}
+          password: #{user.password}
+        """)
       else
-        _ ->
-          {:ok, org} = create_first_org()
-          org
+        Mix.shell().error("Issue validating user")
+        Mix.shell().error(user.errors)  
       end
 
-    user = User.changeset(%User{}, %{email: email, password: password, org_id: org.id})
-
-    {:ok, user} = Repo.insert(user)
-
-    Mix.shell().info("""
-    User created:
-      email address: #{user.email}
-      apikey: #{user.apikey}
-    """)
+    else
+      _ -> Mix.shell().error("Org #{org_id} not found! Create it first!")
+    end
   end
 
   def run(_) do
     Mix.shell().info("Task not found")
-  end
-
-  defp create_first_org do
-    Mix.shell().info("No local organisation exists, let's create one!")
-
-    Mix.shell().info("Creating Organisation...")
-
-    name = Mix.shell().prompt("Name: ") |> String.trim()
-    description = Mix.shell().prompt("Description: ") |> String.trim()
-
-    org = Org.changeset(%Org{}, %{name: name, description: description, local: true})
-
-    if org.valid? do
-      Repo.insert(org)
-    else
-      create_first_org()
-    end
   end
 end
