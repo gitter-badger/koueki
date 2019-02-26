@@ -29,7 +29,6 @@ config :logger, :error_log,
   path: "logs/koueki.log",
   level: :info
 
-
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 

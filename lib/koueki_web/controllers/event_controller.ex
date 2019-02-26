@@ -161,7 +161,7 @@ defmodule KouekiWeb.EventsController do
       json(conn, %{deleted: true})
     else
       nil -> Status.not_found(conn, "Event #{id} not found")
-      e -> IO.inspect e
+      e -> IO.inspect(e)
     end
   end
 

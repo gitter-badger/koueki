@@ -13,7 +13,7 @@ defmodule KouekiWeb.MISPAPI.TagController do
 
   alias KouekiWeb.{
     TagController,
-    Status,
+    Status
   }
 
   def view(conn, params) do

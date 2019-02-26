@@ -3,7 +3,7 @@ defmodule KouekiWeb.MISPAPI.EventsController do
 
   alias Koueki.{
     Event,
-    Attribute,
+    Attribute
   }
 
   alias KouekiWeb.{

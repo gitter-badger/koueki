@@ -133,6 +133,4 @@ defmodule Koueki.Attribute do
   end
 
   defp limit_category(query, _), do: query
-  
-
 end

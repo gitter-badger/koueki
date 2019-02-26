@@ -9,7 +9,7 @@ defmodule Mix.Tasks.Koueki.Org do
     {options, [], []} =
       OptionParser.parse(rest,
         strict: [
-          description: :string,
+          description: :string
         ]
       )
 
