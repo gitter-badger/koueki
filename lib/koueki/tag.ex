@@ -49,4 +49,29 @@ defmodule Koueki.Tag do
   def find_or_create(params) when is_list(params) do
     Enum.map(params, fn x -> find_or_create(x) end)
   end
+
+  def search(params) do
+    page =
+      from(tag in Tag)
+      |> restrict_name(params) 
+      |> restrict_uuid(params)
+      |> Repo.paginate(
+        page: Map.get(params, "page", 0),
+        page_size: Map.get(params, "limit", 20)
+      )
+
+    {page.entries, page.total_pages}
+  end
+
+  defp restrict_name(query, %{"name" => name}) do
+    from(tag in query, where: ilike(tag.name, ^name))
+  end
+
+  defp restrict_name(query, _), do: query
+
+  defp restrict_uuid(query, %{"uuid" => uuid}) do
+    from(tag in query, where: tag.uuid == ^uuid)
+  end
+
+  defp restrict_uuid(query, _), do: query
 end

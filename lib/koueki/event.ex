@@ -89,6 +89,12 @@ defmodule Koueki.Event do
     |> validate()
   end
 
+  def add_tags_changeset(struct, %{tags: tags}) do
+    struct
+    |> cast(%{}, [])
+    |> put_assoc(:tags, struct.tags ++ Tag.find_or_create(tags))
+  end
+
   def edit_changeset(struct, params) do
     struct
     |> cast(params, [

@@ -13,7 +13,8 @@ defmodule KouekiWeb.EventsController do
     EventView,
     Status,
     Utils,
-    AttributeView
+    AttributeView,
+    TagView
   }
 
   def view(conn, %{"id" => id}, opts \\ [as: "event.json"]) do
@@ -178,5 +179,44 @@ defmodule KouekiWeb.EventsController do
 
     conn
     |> json(AttributeView.render(opts[:as], %{attributes: attributes}))
+  end
+
+  def get_tags(conn, %{"id" => id}) do
+    with %Event{} = event <- Event.get_with_preload(id, [:tags]) do 
+      conn
+      |> json(TagView.render("tags.json", %{tags: event.tags}))
+    end
+  end
+
+  def add_tag(conn, %{"event_id" => id, "_json" => params}) do
+    # Add multiple tags
+    with %Event{} = event <- Event.get_with_preload(id, [:tags]) do
+      changeset = Event.add_tags_changeset(event, %{tags: params})
+      if changeset.valid? do
+        {:ok, event} = Repo.update(changeset)
+        conn
+        |> put_status(201)
+        |> json(TagView.render("tags.json", %{tags: event.tags}))
+      else
+        Status.validation_error(conn, changeset)
+      end
+    else
+      _ -> Status.not_found(conn, "Event #{id} not found")
+    end
+  end
+
+  def add_tag(conn, %{"event_id" => id} = params) do
+    # One tag only
+    with %Event{} = event <- Event.get_with_preload(id, [:tags]) do
+      changeset = Event.add_tags_changeset(event, %{tags: [params]})
+      if changeset.valid? do
+        {:ok, event} = Repo.update(changeset)            
+        conn
+        |> put_status(201)
+        |> json(TagView.render("tag.json", %{tag: List.last(event.tags)}))
+      else            
+        Status.validation_error(conn, changeset)
+      end               
+    end
   end
 end

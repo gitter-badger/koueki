@@ -17,7 +17,7 @@ defmodule KouekiWeb.EventsTest do
     assert %{"info" => _} = json_response(conn, 200)
   end
 
-  test "POST /v2/event/", %{conn: conn} do
+  test "POST /v2/events/", %{conn: conn} do
     user = insert(:user)
 
     conn =
@@ -229,5 +229,43 @@ defmodule KouekiWeb.EventsTest do
       )
 
     assert [%{"value" => ip}] = json_response(conn, 201)
+  end
+
+  test "GET /v2/events/:id/tags/", %{conn: conn} do
+    user = insert(:user)
+    tag = insert(:tag)
+    event = insert(:event, tags: [tag])
+
+    conn =
+      conn
+      |> assign(:user, user)
+      |> get("/v2/events/#{event.id}/tags/")
+
+    expected_name = tag.name
+    assert [%{"name" => ^expected_name}] = json_response(conn, 200)
+  end
+
+  test "POST /v2/events/:id/tags/", %{conn: conn} do
+    user = insert(:user)
+    event = insert(:event)
+
+    conn =
+      conn
+      |> assign(:user, user)
+      |> post("/v2/events/#{event.id}/tags/", %{"name" => "plastic love"})
+
+    assert %{"name" => "plastic love"} = json_response(conn, 201)
+
+    event = insert(:event)
+
+    conn =                           
+      build_conn()
+      |> assign(:user, user)         
+      |> post("/v2/events/#{event.id}/tags/", %{"_json" => [
+          %{"name" => "I'm just playing games"},
+          %{"name" => "Pretty cool my dude"}]})
+
+    assert [%{"name" => "I'm just playing games"},
+            %{"name" => "Pretty cool my dude"}] = json_response(conn, 201)
   end
 end

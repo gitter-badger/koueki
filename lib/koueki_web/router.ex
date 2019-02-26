@@ -77,20 +77,23 @@ defmodule KouekiWeb.Router do
     patch "/events/:id", EventsController, :edit
     delete "/events/:id", EventsController, :delete
     post "/events/search", EventsController, :search
+    get "/events/:id/tags", EventsController, :get_tags
+    post "/events/:event_id/tags", EventsController, :add_tag
 
     # Event->Attribute level
     get "/events/:id/attributes", EventsController, :get_attributes
     post "/events/:id/attributes", EventsController, :add_attribute
+    post "/events/:event_id/attributes/:id/tags", AttributeController, :add_tag
 
     # Attribute level
     get "/attributes/types", AttributeController, :describe_types
     get "/attributes/categories", AttributeController, :describe_categories
     post "/attributes/search", AttributeController, :search
+    post "/attributes/:id/tags", AttributeController, :add_tag
 
     # Tag level
     get "/tags/:id", TagController, :view
     post "/tags", TagController, :create
+    post "/tags/search", TagController, :search
   end
-
-  # Fallback
 end

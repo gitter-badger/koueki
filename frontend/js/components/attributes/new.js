@@ -15,6 +15,16 @@ class CreateAttribute extends React.PureComponent {
 
     onChange = (e, {name, value}) => this.setState({[name]: value})
 
+    onTypeChange = (e, {name, value}) => {
+        const type = this.props.types[value];
+
+        if (!type.valid_for.includes(value)) {
+            this.setState({[name]: value, category: type.defaults.category})
+        } else {
+            this.setState({[name]: value})
+        }
+    }
+
     submit = async () => {
         const { match: { params: { id: id }}} = this.props;
 
@@ -52,7 +62,7 @@ class CreateAttribute extends React.PureComponent {
                         fluid
                         width={8}
                         value={this.state.type}
-                        onChange={this.onChange}
+                        onChange={this.onTypeChange}
                         options={Object.keys(this.props.types).map(x => ({             
                             text: x, value: x
                         }))}                

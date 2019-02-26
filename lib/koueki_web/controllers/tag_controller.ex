@@ -35,4 +35,12 @@ defmodule KouekiWeb.TagController do
       Status.validation_error(conn, tag)
     end
   end
+
+  def search(conn, params) do
+    {entries, page_count} = Tag.search(params)
+
+    conn
+    |> put_resp_header("X-Page-Count", to_string(page_count))
+    |> json(TagView.render("tags.json", %{tags: entries})) 
+  end
 end

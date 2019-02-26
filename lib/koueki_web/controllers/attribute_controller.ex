@@ -21,4 +21,9 @@ defmodule KouekiWeb.AttributeController do
     |> put_resp_header("X-Page-Count", to_string(page_count))
     |> json(AttributeView.render("attributes.json", %{attributes: entries}))
   end
+
+  def add_tag(conn, %{"id" => id} = params) do
+
+  end
+    
 end
