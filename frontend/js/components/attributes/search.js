@@ -18,23 +18,6 @@ class AttributeSearch extends React.PureComponent {
             "value": "string",
             "type": "attr-type",
             "category": "attr-category",
-            "org": "string",
-            "tags": "string",
-            "from": "string",
-            "to": "string",
-            "last": "string",
-            "eventid": "string",
-            "withAttachments": "string",
-            "uuid": "string",
-            "publish_timestamp": "string",
-            "timestamp": "string",
-            "enforceWarninglist": "string",
-            "to_ids": "boolean",
-            "deleted": "boolean",
-            "includeEventUuid": "boolean",
-            "includeEventTags": "boolean",
-            "event_timestamp": "string",
-            "threat_level_id": "string"
         };
 
         return (

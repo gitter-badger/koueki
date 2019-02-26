@@ -43,6 +43,12 @@ defmodule KouekiWeb.Router do
     post "/logout", SessionController, :logout
   end
 
+  scope "/authcheck", KouekiWeb do
+    pipe_through :authenticated_api
+
+    get "/", InstanceController, :check_credentials
+  end
+
   scope "/v1", KouekiWeb.MISPAPI do
     pipe_through :authenticated_api
 
@@ -79,6 +85,7 @@ defmodule KouekiWeb.Router do
     # Attribute level
     get "/attributes/types", AttributeController, :describe_types
     get "/attributes/categories", AttributeController, :describe_categories
+    post "/attributes/search", AttributeController, :search
 
     # Tag level
     get "/tags/:id", TagController, :view

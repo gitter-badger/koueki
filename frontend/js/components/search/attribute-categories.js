@@ -12,7 +12,7 @@ const AttributeCategoryDropdown = ({ categories, ...props }) => (
     />
 );
 
-const mapAttributeCategoriesToProps = ({ config: { attributeTypes: { categories }}}) => ({
+const mapAttributeCategoriesToProps = ({ config: { categories: categories }}) => ({
     categories
 });
 

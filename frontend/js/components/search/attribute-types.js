@@ -12,8 +12,8 @@ const AttributeTypeDropdown = ({ types, ...props }) => (
     />
 );
 
-const mapAttributeTypesToProps = ({ config: { attributeTypes: { types }}}) => ({
-    types
+const mapAttributeTypesToProps = ({ config: { types: types }}) => ({
+    types: Object.keys(types)
 });
 
 export default connect(mapAttributeTypesToProps)(AttributeTypeDropdown);

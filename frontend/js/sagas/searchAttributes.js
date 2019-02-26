@@ -6,11 +6,10 @@ function* searchAttributes({data}) {
     const searchParams = Object.assign({}, data, {returnFormat: "json"});
     yield put({type: SEND_ATTRIBUTE_SEARCH, data: searchParams});
 
-    const response = yield post("/attributes/restSearch", searchParams);
-    const resultCount = response.headers.get("X-result-count");
+    const response = yield post("/v2/attributes/search", searchParams);
+    const numPages = response.headers.get("X-result-count");
     const json = yield response.json();
-    const numPages = Math.ceil(resultCount / searchParams.limit);
-    yield put({type: RECV_ATTRIBUTE_SEARCH, attributes: json.response.Attribute, pages: numPages });
+    yield put({type: RECV_ATTRIBUTE_SEARCH, attributes: json, pages: numPages });
 }
 
 export default function* watchAttributeSearch() {

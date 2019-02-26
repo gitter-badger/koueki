@@ -10,7 +10,8 @@ import attributeReducer from "reducers/attributes";
 const configPersistence = {
     key: "config",
     storage,
-    stateReconciler: autoMergeLevel2
+    stateReconciler: autoMergeLevel2,
+    blacklist: ["loggedIn"]
 };
 
 

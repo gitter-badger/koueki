@@ -22,5 +22,5 @@ function* configGetter() {
 }
 
 export default function* loginGetWatch() {
-    yield takeLatest(REQUEST_CONFIG, configGetter);
+    yield takeLatest([RECV_LOGIN_STATUS, REQUEST_CONFIG], configGetter);
 }

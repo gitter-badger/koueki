@@ -8,8 +8,8 @@ const Placeholder = () => (
 const load_options = { LoadingComponent: () => <Placeholder /> };
 
 const routes = [
-    { path: "/", component: () => import("home/index") },
-    { path: "/login", component: () => import("auth/login") },
+    { path: "/", component: () => import("home/index"), public: true },
+    { path: "/login", component: () => import("auth/login"), public: true },
     { path: "/logout", component: () => import("auth/logout") },
     { path: "/attributes", component: () => import("attributes/index") },
     { prefix: "/events", components: [
@@ -30,7 +30,8 @@ const process_components = (components, base_route="") => {
         } else {
             // It's a leaf, append to flattened
             flattened.push({ path: base_route + c.path,
-                component: loadable(c.component,load_options)
+                component: loadable(c.component,load_options),
+                public: c.public
             });
         }
     });

@@ -18,7 +18,7 @@ class LoginForm extends React.PureComponent {
     }
 
     let response = await post("/auth/login", postBody);
-    let json = response.json();
+    let json = await response.json();
     if (json.error) {
       toast.error(json.error);
       this.props.setLoginStatus(false);

@@ -5,7 +5,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import { ConnectedRouter } from 'connected-react-router';
 import { ToastContainer } from "react-toastify";
 import { Container, Segment } from "semantic-ui-react";
-
+import RequireLoginStatus from "require-login-status";
 import routemap from "routemap";
 import NavBar from "navbar/index";
 
@@ -22,7 +22,27 @@ const App = ({ store, persistor, history}) => (
                                     key={index}
                                     path={route.path}
                                     exact
-                                    render={(props) => <Container><Segment inverted><route.component {...props} /></Segment></Container>}
+                                    render={(props) => {
+                                        if (!route.public) {
+                                            return (
+                                                <Container>
+                                                    <Segment inverted>
+                                                        <RequireLoginStatus status={true}>
+                                                            <route.component {...props} />
+                                                        </RequireLoginStatus>
+                                                    </Segment>
+                                                </Container>
+                                            );
+                                        } else {
+                                            return (
+                                                <Container>
+                                                    <Segment inverted>
+                                                        <route.component {...props} />
+                                                    </Segment>
+                                                </Container>
+                                            );
+                                        }
+                                    }}
                                 />
                             ))}
                         </Switch>

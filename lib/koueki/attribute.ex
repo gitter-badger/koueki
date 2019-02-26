@@ -1,11 +1,13 @@
 defmodule Koueki.Attribute do
   use Ecto.Schema
+  import Ecto.Query
   import Ecto.Changeset
 
   alias Koueki.{
     Attribute,
     Event,
-    Tag
+    Tag,
+    Repo
   }
 
   alias Ecto.{
@@ -97,4 +99,40 @@ defmodule Koueki.Attribute do
   end
 
   defp validate_to_ids(%Changeset{changes: %{}} = changeset), do: changeset
+
+  def search(params) do
+    page =
+      from(attribute in Attribute,
+        preload: [:tags]
+      )
+      |> limit_value(params)
+      |> limit_type(params)
+      |> limit_category(params)
+      |> Repo.paginate(
+        page: Map.get(params, "page", 0),
+        page_size: Map.get(params, "limit", 20)
+      )
+
+    {page.entries, page.total_pages}
+  end
+
+  defp limit_value(query, %{"value" => value}) do
+    from(attribute in query, where: ilike(attribute.value, ^value))
+  end
+
+  defp limit_value(query, _), do: query
+
+  defp limit_type(query, %{"type" => type}) do
+    from(attribute in query, where: attribute.type == ^type)
+  end
+
+  defp limit_type(query, _), do: query
+
+  defp limit_category(query, %{"category" => category}) do
+    from(attribute in query, where: attribute.category == ^category)
+  end
+
+  defp limit_category(query, _), do: query
+  
+
 end
