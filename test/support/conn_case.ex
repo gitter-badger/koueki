@@ -19,6 +19,7 @@ defmodule KouekiWeb.ConnCase do
     quote do
       # Import conveniences for testing with connections
       use Phoenix.ConnTest
+      import Bureaucrat.Helpers
       alias KouekiWeb.Router.Helpers, as: Routes
 
       # The default endpoint for testing

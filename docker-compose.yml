@@ -6,18 +6,20 @@ services:
     container_name: koueki
     image: koueki:latest
     restart: unless-stopped
+    depends_on:
+    - db
     ports:
       - "4000:4000"
+
     environment:
-      - POSTGRES_HOST=postgres
-      - POSTGRES_USER=koueki
-      - POSTGRES_PASSWORD=postgres
       - MIX_ENV=prod
-      - INITIAL_USERNAME=koueki
-      - INITIAL_PASSWORD=admin
-      - ORG_NAME=koueki_org
+      - ADMIN_USERNAME=koueki
+      - ORG_NAME=My Org
+
     secrets:
       - config
+    volumes:
+      - /data/koueki/logs:/koueki/logs/
 
   db:
     container_name: postgres

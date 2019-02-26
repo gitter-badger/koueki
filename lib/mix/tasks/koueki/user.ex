@@ -10,6 +10,7 @@ defmodule Mix.Tasks.Koueki.User do
       OptionParser.parse(rest,
         strict: [
           password: :string,
+          orgname: :string,
           orgid: :integer
         ]
       )
@@ -23,9 +24,22 @@ defmodule Mix.Tasks.Koueki.User do
         password
     end
 
-    org_id = Keyword.get(options, :orgid, 1)
+    org_id = Keyword.get(options, :orgid)
+    org_name = Keyword.get(options, :orgname)
 
-    with %Org{} = org <- Repo.get(Org, org_id) do
+    org = cond do
+      not is_nil(org_id) ->
+        Mix.shell().info("Using org id #{org_id}")
+        Repo.get(Org, org_id)
+      not is_nil(org_name) ->
+        Mix.shell().info("Using org name #{org_name}")
+        Repo.get_by(Org, name: org_name)
+      true ->
+        Mix.shell().error("Required: either --orgname or --orgid")
+        exit({:shutdown, 1})
+    end
+
+    with %Org{} = org do
       user = User.changeset(%User{}, %{email: email, password: password, org_id: org.id})
 
       if user.valid? do
@@ -44,6 +58,18 @@ defmodule Mix.Tasks.Koueki.User do
 
     else
       _ -> Mix.shell().error("Org #{org_id} not found! Create it first!")
+    end
+  end
+
+  def run(["exists", email]) do
+    Common.start_koueki()
+    with %User{} = user <- Repo.get_by(User, email: email) do
+      Mix.shell().info("User #{email} exists!")
+      exit({:shutdown, 0})
+    else
+      _ ->
+        Mix.shell().info("User #{email} does not exist!")
+        exit({:shutdown, 1})
     end
   end
 

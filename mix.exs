@@ -49,7 +49,9 @@ defmodule Koueki.MixProject do
       {:ex_random_string, "~> 1.0.1"},
       {:ex_machina, "~> 2.2"},
       {:timex, "~> 3.1"},
-      {:scrivener_ecto, "~> 2.0"}
+      {:scrivener_ecto, "~> 2.0"},
+      {:logger_file_backend, "~> 0.0.10"},
+      {:bureaucrat, "~> 0.2.5"},
     ]
   end
 

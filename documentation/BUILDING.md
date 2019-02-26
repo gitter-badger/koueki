@@ -19,6 +19,10 @@ And your containers will build and start. This will use a dockerised postgres
 container which will store its data in `/data/koueki/db`. You can alternatively
 point koueki at any other postgres database available over the network.
 
+Your organisation and an administrative user will be created at startup with a random 
+password - this will be saved in a file called `ADMIN_USER`, in the 
+volume mounted to "/logs" - by default `/data/koueki/logs/`
+
 Once docker-compose has finished doing its thing, koueki will be available at
 http://localhost:4000
 

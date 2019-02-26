@@ -1,4 +1,5 @@
 # The directory Mix will write compiled artifacts to.
+logs
 /_build/
 *.swp
 assets/dist

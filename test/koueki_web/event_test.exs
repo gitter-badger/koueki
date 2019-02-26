@@ -12,6 +12,7 @@ defmodule KouekiWeb.EventsTest do
       conn
       |> assign(:user, user)
       |> get("/v2/events/#{event.id}")
+      |> doc()
 
     assert %{"info" => _} = json_response(conn, 200)
   end
@@ -23,6 +24,7 @@ defmodule KouekiWeb.EventsTest do
       conn
       |> assign(:user, user)
       |> post("/v2/events/", %{info: "my event"})
+      |> doc()
 
     assert %{"info" => "my event"} = json_response(conn, 201)
 
@@ -160,6 +162,7 @@ defmodule KouekiWeb.EventsTest do
           ]
         }
       )
+      |> doc()
 
     assert [
              %{"value" => first_ip},

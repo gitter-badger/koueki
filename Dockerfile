@@ -2,32 +2,25 @@ FROM elixir:1.7-alpine
 
 RUN apk -U upgrade \
     && apk add --no-cache \
-       build-base nodejs npm
+       build-base nodejs npm \
+    && npm i -g yarn
 
-
-RUN npm i -g yarn
-
-ENV UID=911 GID=911 \
-    MIX_ENV=prod
-
-RUN addgroup -g ${GID} koueki \
-    && adduser -h /koueki -s /bin/sh -D -G koueki -u ${UID} koueki
-
+ENV MIX_ENV=prod
 
 ADD . /koueki
 WORKDIR /koueki
 ADD docker/run.sh .
+ADD docker/wait-for /usr/bin/wait-for
 
-RUN chown -R koueki:koueki /koueki
-
-USER koueki
-RUN cd frontend && yarn && npx webpack -p && cd .. && rm -rf frontend/node_modules
-
-
-RUN touch config/prod.secret.exs
-RUN mix local.rebar --force \
+RUN cd frontend \
+    && yarn \
+    && npx webpack -p \
+    && cd .. \
+    && rm -rf frontend/node_modules \
+    && touch config/prod.secret.exs \
+    && mix local.rebar --force \
     && mix local.hex --force \
-    && mix deps.get \\
+    && mix deps.get \
     && mix compile
 
 CMD ["/bin/sh", "run.sh"]

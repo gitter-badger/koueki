@@ -18,9 +18,17 @@ config :koueki, KouekiWeb.Endpoint,
   pubsub: [name: Koueki.PubSub, adapter: Phoenix.PubSub.PG2]
 
 # Configures Elixir's Logger
+config :logger,
+  backends: [:console, {LoggerFileBackend, :error_log}]
+
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
+
+config :logger, :error_log,
+  path: "logs/koueki.log",
+  level: :info
+
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
