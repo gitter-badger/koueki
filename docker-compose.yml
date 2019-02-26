@@ -1,8 +1,8 @@
-version: '2'
+version: '3.1'
 
 services:
   web:
-    build: server
+    build: .
     container_name: koueki
     image: koueki:latest
     restart: unless-stopped
@@ -16,6 +16,8 @@ services:
       - INITIAL_USERNAME=koueki
       - INITIAL_PASSWORD=admin
       - ORG_NAME=koueki_org
+    secrets:
+      - config
 
   db:
     container_name: postgres
@@ -26,3 +28,7 @@ services:
     environment:
       - POSTGRES_USER=koueki
       - POSTGRES_PASSWORD=postgres
+
+secrets:
+  config:
+    file: config/prod.secret.exs

@@ -26,6 +26,7 @@ koueki-*.tar
 
 # If NPM crashes, it generates a log, let's ignore it too.
 npm-debug.log
+priv/static
 
 # The directory NPM downloads your dependencies sources to.
 /frontend/node_modules/
