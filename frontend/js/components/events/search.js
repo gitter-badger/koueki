@@ -15,8 +15,11 @@ class EventSearch extends React.PureComponent {
 
     render() {
         const validSearch = {
-            "id": "integer",
             "info": "string",
+            "value": "string",
+            "category": "attr-category",
+            "type": "attr-type",
+            "tags": "string"
         };
 
         return (

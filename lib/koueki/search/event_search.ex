@@ -42,17 +42,21 @@ defmodule Koueki.Event.Search do
   you an idea of the sort of thing we're trying to achieve
   """
   def run(params) do
-    needs_wrap? = Map.has_key?(params, "and") or Map.has_key?(params, "or")
 
-    params = 
+    needs_wrap? = not(
+      ["and", "or", "not"]
+      |> Enum.any?(fn x -> Map.has_key?(params, x) end)
+    )
+
+    search_params = 
       if needs_wrap? do
-        %{"or" => params}
+        %{"and" => params}
       else
         params
       end
 
     outer_key = 
-      params
+      search_params
       |> Map.keys()
       |> List.first()
 
@@ -63,12 +67,7 @@ defmodule Koueki.Event.Search do
         "not" -> "&"
       end
 
-    # Nothing should match at the beginning
-    # Conditions will be layered up, so we want false OR (conds)
-    conditions =
-      initial_condition 
-      |> String.equivalent?("&")
-      |> generate(params, condition: initial_condition)
+    conditions = generate(search_params, condition: initial_condition)
 
     event_ids = 
       from(event in Koueki.Event.Search, select: event.id, where: ^conditions)
@@ -102,78 +101,65 @@ defmodule Koueki.Event.Search do
     |> String.replace_trailing("*", ":*")
   end
 
-  defp generate(conditions, params, opts \\ [condition: "|"])
+  defp generate(params, opts \\ [condition: "|"])
 
-  defp generate(conditions, %{"and" => %{} = params}, opts) do
+  defp generate(%{"and" => %{} = params}, opts) do
     params
     |> Map.keys()
     |> Enum.reduce(
-      conditions,
-      fn query_param, conditions ->
-          case opts[:condition] do
-            "|" ->
-               dynamic([event],
-                ^conditions or ^generate(conditions, %{query_param => params[query_param]}, [condition: "&"]))
-            "&" ->
-              dynamic([event],
-                ^conditions and ^generate(conditions, %{query_param => params[query_param]}, [condition: "&"]))
-        end
+      true,
+      fn key, conditions ->
+        dynamic([event],
+          (^conditions and ^generate(Map.take(params, [key]), [condition: "&"])))
       end)
   end
 
-  defp generate(conditions, %{"or" => %{} = params}, opts) do
-    params                                           
+  defp generate(%{"or" => %{} = params}, opts) do
+    params
     |> Map.keys()
     |> Enum.reduce(
-      conditions, 
-      fn query_param, conditions ->
-        case opts[:condition] do
-            "|" ->      
-               dynamic([event],
-                ^conditions or ^generate(conditions, %{query_param => params[query_param]}, [condition: "|"]))         
-            "&" ->      
-              dynamic([event],
-                ^conditions and ^generate(conditions, %{query_param => params[query_param]}, [condition: "|"]))
-        end
+      true,
+      fn key, conditions ->
+        dynamic([event], (^conditions or ^generate(Map.take(params, [key]), [condition: "|"])))
       end)
   end
 
-  defp generate(conditions, %{"not" => %{} = params}, opts) do
-    params                                          
-    |> Map.keys()
-    |> Enum.reduce(
-      conditions,
-      fn query_param, conditions ->
-        case opts[:condition] do
-            "|" ->
-               dynamic([event],
-                ^conditions or not ^generate(conditions, %{query_param => params[query_param]}, [condition: "|"]))
-            "&" ->
-              dynamic([event],
-                ^conditions and not ^generate(conditions, %{query_param => params[query_param]}, [condition: "|"]))
-        end
-      end)                 
+  defp generate(%{"not" => %{} = params}, opts) do
+    if_true = 
+      params
+      |> Map.keys()
+      |> Enum.reduce(
+        true,
+        fn key, conditions ->
+          dynamic([event], (^conditions and ^generate(Map.take(params, [key]))))
+        end)
+    dynamic([event], not ^if_true)
   end
 
-  defp generate(conditions, %{"info" => value}, opts) do
+  defp generate(%{"info" => value}, opts) do
     dynamic([event], fragment("? @@ to_tsquery(?)", event.info, ^value_to_ts(value, opts)))
   end
 
-  defp generate(conditions, %{"tags" => value}, opts) do
+  defp generate(%{"tags" => value}, opts) do
     dynamic([event], fragment("? @@ to_tsquery(?)", event.tags, ^value_to_ts(value, opts)))
   end
 
-  defp generate(conditions, %{"category" => value}, opts) do
+  defp generate(%{"category" => value}, opts) do
     dynamic([event], fragment("? @@ to_tsquery(?)", event.category, ^value_to_ts(value, opts))) 
   end
 
-  defp generate(conditions, %{"type" => value}, opts) do   
+  defp generate(%{"type" => value}, opts) do   
     dynamic([event], fragment("? @@ to_tsquery(?)", event.type, ^value_to_ts(value, opts)))
   end
 
-  defp generate(conditions, %{"value" => value}, opts) do   
+  defp generate(%{"value" => value}, opts) do   
     dynamic([event], fragment("? @@ to_tsquery(?)", event.value, ^value_to_ts(value, opts)))
   end
 
-  defp generate(conditions, _, _), do: conditions
+  defp generate(_, opts) do
+    case opts[:condition] do
+      "&" -> true
+      "|" -> false
+    end
+  end
 end

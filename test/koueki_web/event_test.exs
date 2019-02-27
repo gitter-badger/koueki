@@ -59,6 +59,22 @@ defmodule KouekiWeb.EventsTest do
         }
       )
     assert [%{"id" => ^second_id}] = json_response(conn, 200)
+
+    conn =
+      build_conn()
+      |> assign(:user, user)
+      |> post("/v2/events/search/",
+        %{"and" => %{}}
+      )
+    assert [%{}, %{}] = json_response(conn, 200)
+
+    conn =
+      build_conn()
+      |> assign(:user, user)
+      |> post("/v2/events/search/",
+        %{"or" => %{}}
+      )       
+    assert [%{}, %{}] = json_response(conn, 200)
   end
 
   test "GET /v2/events/:id", %{conn: conn} do
