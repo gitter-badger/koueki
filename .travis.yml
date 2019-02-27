@@ -3,7 +3,7 @@ language: elixir
 elixir: "1.8"
 
 addons:
-  postgresql: "11"
+  postgresql: "9.6"
 
 env:
   - MIX_ENV=test
