@@ -44,39 +44,50 @@ defmodule KouekiWeb.EventsTest do
     conn =
       build_conn()
       |> assign(:user, user)
-      |> post("/v2/events/search/", %{"and" => %{"tags" => second_tag.name, "info" => second_event.info}})
+      |> post("/v2/events/search/", %{
+        "and" => %{"tags" => second_tag.name, "info" => second_event.info}
+      })
 
     assert [] = json_response(conn, 200)
 
     conn =
       build_conn()
       |> assign(:user, user)
-      |> post("/v2/events/search/", %{"and" => %{"tags" => first_tag.name, "info" => first_event.info}})
-     
+      |> post("/v2/events/search/", %{
+        "and" => %{"tags" => first_tag.name, "info" => first_event.info}
+      })
+
     assert [%{"id" => ^first_id}] = json_response(conn, 200)
 
-    conn =                                                
-      build_conn()                                        
+    conn =
+      build_conn()
       |> assign(:user, user)
-      |> post("/v2/events/search/",
-      %{"and" => %{
-        "tags" => first_tag.name, 
-        "or" => %{"info" => [first_event.info, second_event.info]}
-      }})
-                                                                                    
+      |> post(
+        "/v2/events/search/",
+        %{
+          "and" => %{
+            "tags" => first_tag.name,
+            "or" => %{"info" => [first_event.info, second_event.info]}
+          }
+        }
+      )
+
     assert [%{}, %{}] = json_response(conn, 200)
 
     conn =
       build_conn()
       |> assign(:user, user)
-      |> post("/v2/events/search/",
-      %{"and" => %{
-        "tags" => first_tag.name, 
-        "and" => %{"info" => [first_event.info, second_event.info]}
-      }})
-                                                                                    
-    assert [] = json_response(conn, 200)
+      |> post(
+        "/v2/events/search/",
+        %{
+          "and" => %{
+            "tags" => first_tag.name,
+            "and" => %{"info" => [first_event.info, second_event.info]}
+          }
+        }
+      )
 
+    assert [] = json_response(conn, 200)
 
     conn =
       build_conn()
