@@ -17,7 +17,6 @@ defmodule Koueki.Attribute.Search do
     search_params = maybe_wrap(params)
     initial_condition = get_initial_condition(search_params)
     conditions = generate(search_params, condition: initial_condition)
-
     attribute_ids =
       from(attribute in Koueki.Attribute.Search, select: attribute.id, where: ^conditions)
 
