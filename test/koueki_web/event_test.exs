@@ -41,39 +41,45 @@ defmodule KouekiWeb.EventsTest do
 
     assert [%{"id" => ^first_id}] = json_response(conn, 200)
 
-    conn = 
+    conn =
       build_conn()
       |> assign(:user, user)
       |> post("/v2/events/search/", %{"or" => %{"tags" => [first_tag.name, second_tag.name]}})
 
     assert [%{"id" => ^first_id}, %{"id" => ^second_id}] = json_response(conn, 200)
 
-    conn =            
-      build_conn()    
+    conn =
+      build_conn()
       |> assign(:user, user)
-      |> post("/v2/events/search/",
-        %{"not" => 
-          %{
-              "tags" => second_tag.name, 
+      |> post(
+        "/v2/events/search/",
+        %{
+          "not" => %{
+            "tags" => second_tag.name
           }
         }
       )
+
     assert [%{"id" => ^second_id}] = json_response(conn, 200)
 
     conn =
       build_conn()
       |> assign(:user, user)
-      |> post("/v2/events/search/",
+      |> post(
+        "/v2/events/search/",
         %{"and" => %{}}
       )
+
     assert [%{}, %{}] = json_response(conn, 200)
 
     conn =
       build_conn()
       |> assign(:user, user)
-      |> post("/v2/events/search/",
+      |> post(
+        "/v2/events/search/",
         %{"or" => %{}}
-      )       
+      )
+
     assert [%{}, %{}] = json_response(conn, 200)
   end
 
@@ -331,14 +337,14 @@ defmodule KouekiWeb.EventsTest do
 
     event = insert(:event)
 
-    conn =                           
+    conn =
       build_conn()
-      |> assign(:user, user)         
-      |> post("/v2/events/#{event.id}/tags/", %{"_json" => [
-          %{"name" => "I'm just playing games"},
-          %{"name" => "Pretty cool my dude"}]})
+      |> assign(:user, user)
+      |> post("/v2/events/#{event.id}/tags/", %{
+        "_json" => [%{"name" => "I'm just playing games"}, %{"name" => "Pretty cool my dude"}]
+      })
 
-    assert [%{"name" => "I'm just playing games"},
-            %{"name" => "Pretty cool my dude"}] = json_response(conn, 201)
+    assert [%{"name" => "I'm just playing games"}, %{"name" => "Pretty cool my dude"}] =
+             json_response(conn, 201)
   end
 end

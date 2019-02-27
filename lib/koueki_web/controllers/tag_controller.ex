@@ -41,6 +41,6 @@ defmodule KouekiWeb.TagController do
 
     conn
     |> put_resp_header("X-Page-Count", to_string(page_count))
-    |> json(TagView.render("tags.json", %{tags: entries})) 
+    |> json(TagView.render("tags.json", %{tags: entries}))
   end
 end

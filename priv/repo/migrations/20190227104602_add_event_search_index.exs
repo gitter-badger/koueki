@@ -6,8 +6,7 @@ defmodule Koueki.Repo.Migrations.AddEventSearchIndex do
       CREATE EXTENSION IF NOT EXISTS unaccent
     """)
 
-    execute(
-    """
+    execute("""
     CREATE MATERIALIZED VIEW event_search AS
       SELECT
         events.id AS id,
@@ -55,28 +54,28 @@ defmodule Koueki.Repo.Migrations.AddEventSearchIndex do
     """)
 
     execute("""
-      CREATE TRIGGER refresh_event_search
-      AFTER INSERT OR UPDATE OR DELETE OR TRUNCATE
-      ON tags
-      FOR EACH STATEMENT
-      EXECUTE PROCEDURE refresh_event_search();
-      """)
+    CREATE TRIGGER refresh_event_search
+    AFTER INSERT OR UPDATE OR DELETE OR TRUNCATE
+    ON tags
+    FOR EACH STATEMENT
+    EXECUTE PROCEDURE refresh_event_search();
+    """)
 
     execute("""
-      CREATE TRIGGER refresh_event_search
-      AFTER INSERT OR UPDATE OR DELETE OR TRUNCATE
-      ON attributes
-      FOR EACH STATEMENT
-      EXECUTE PROCEDURE refresh_event_search();
-      """)
+    CREATE TRIGGER refresh_event_search
+    AFTER INSERT OR UPDATE OR DELETE OR TRUNCATE
+    ON attributes
+    FOR EACH STATEMENT
+    EXECUTE PROCEDURE refresh_event_search();
+    """)
 
     execute("""
-      CREATE TRIGGER refresh_event_search
-      AFTER INSERT OR UPDATE OR DELETE OR TRUNCATE
-      ON attribute_tags
-      FOR EACH STATEMENT
-      EXECUTE PROCEDURE refresh_event_search();
-      """)
+    CREATE TRIGGER refresh_event_search
+    AFTER INSERT OR UPDATE OR DELETE OR TRUNCATE
+    ON attribute_tags
+    FOR EACH STATEMENT
+    EXECUTE PROCEDURE refresh_event_search();
+    """)
 
     create index("event_search", ["info", "tags", "category", "value"], using: :gin)
   end

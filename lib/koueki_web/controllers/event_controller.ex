@@ -18,15 +18,16 @@ defmodule KouekiWeb.EventsController do
   }
 
   def list(conn, params) do
-    page = from(event in Event, preload: [:org, :tags, :attributes])
-    |> Repo.paginate(
-      page: Map.get(params, "page", 0),
-      page_size: Map.get(params, "limit", 20)
-    )
+    page =
+      from(event in Event, preload: [:org, :tags, :attributes])
+      |> Repo.paginate(
+        page: Map.get(params, "page", 0),
+        page_size: Map.get(params, "limit", 20)
+      )
 
     conn
     |> put_resp_header("x-page-count", to_string(page.total_pages))
-    |> json(EventView.render("events.json", %{events: page.entries}))  
+    |> json(EventView.render("events.json", %{events: page.entries}))
   end
 
   def view(conn, %{"id" => id}, opts \\ [as: "event.json"]) do
@@ -194,7 +195,7 @@ defmodule KouekiWeb.EventsController do
   end
 
   def get_tags(conn, %{"id" => id}) do
-    with %Event{} = event <- Event.get_with_preload(id, [:tags]) do 
+    with %Event{} = event <- Event.get_with_preload(id, [:tags]) do
       conn
       |> json(TagView.render("tags.json", %{tags: event.tags}))
     end
@@ -204,8 +205,10 @@ defmodule KouekiWeb.EventsController do
     # Add multiple tags
     with %Event{} = event <- Event.get_with_preload(id, [:tags]) do
       changeset = Event.add_tags_changeset(event, %{tags: params})
+
       if changeset.valid? do
         {:ok, event} = Repo.update(changeset)
+
         conn
         |> put_status(201)
         |> json(TagView.render("tags.json", %{tags: event.tags}))
@@ -221,14 +224,16 @@ defmodule KouekiWeb.EventsController do
     # One tag only
     with %Event{} = event <- Event.get_with_preload(id, [:tags]) do
       changeset = Event.add_tags_changeset(event, %{tags: [params]})
+
       if changeset.valid? do
-        {:ok, event} = Repo.update(changeset)            
+        {:ok, event} = Repo.update(changeset)
+
         conn
         |> put_status(201)
         |> json(TagView.render("tag.json", %{tag: List.last(event.tags)}))
-      else            
+      else
         Status.validation_error(conn, changeset)
-      end               
+      end
     end
   end
 end

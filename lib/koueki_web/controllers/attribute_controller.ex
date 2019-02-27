@@ -23,7 +23,5 @@ defmodule KouekiWeb.AttributeController do
   end
 
   def add_tag(conn, %{"id" => id} = params) do
-
   end
-    
 end

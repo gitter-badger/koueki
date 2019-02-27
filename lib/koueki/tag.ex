@@ -53,7 +53,7 @@ defmodule Koueki.Tag do
   def search(params) do
     page =
       from(tag in Tag)
-      |> restrict_name(params) 
+      |> restrict_name(params)
       |> restrict_uuid(params)
       |> Repo.paginate(
         page: Map.get(params, "page", 0),

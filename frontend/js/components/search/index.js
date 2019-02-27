@@ -28,7 +28,7 @@ const ParameterInput = ({ name, type, value, onChange, ...props }) => {
         default: 
             return <Form.Input 
                 value={value} label={name} name={name} onChange={onChange} 
-                placeholder={`Use % for wildcard matches`}
+                placeholder={`Use * for wildcard matches`}
                 {...props}
             />;
     }
