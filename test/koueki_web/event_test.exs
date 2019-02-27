@@ -4,6 +4,63 @@ defmodule KouekiWeb.EventsTest do
   import Koueki.Factory
   import Koueki.TestHelper
 
+  test "GET /v2/events/", %{conn: conn} do
+    user = insert(:user)
+    insert(:event)
+    insert(:event)
+
+    conn =
+      conn
+      |> assign(:user, user)
+      |> get("/v2/events/")
+
+    assert [%{}, %{}] = json_response(conn, 200)
+
+    conn =
+      build_conn()
+      |> assign(:user, user)
+      |> get("/v2/events/?limit=1")
+
+    assert [%{}] = json_response(conn, 200)
+  end
+
+  test "POST /v2/events/search/", %{conn: conn} do
+    user = insert(:user)
+    first_tag = insert(:tag)
+    second_tag = insert(:tag)
+
+    first_event = insert(:event, tags: [first_tag, second_tag])
+    second_event = insert(:event, tags: [first_tag])
+    first_id = first_event.id
+    second_id = second_event.id
+
+    conn =
+      conn
+      |> assign(:user, user)
+      |> post("/v2/events/search/", %{"and" => %{"tags" => [first_tag.name, second_tag.name]}})
+
+    assert [%{"id" => ^first_id}] = json_response(conn, 200)
+
+    conn = 
+      build_conn()
+      |> assign(:user, user)
+      |> post("/v2/events/search/", %{"or" => %{"tags" => [first_tag.name, second_tag.name]}})
+
+    assert [%{"id" => ^first_id}, %{"id" => ^second_id}] = json_response(conn, 200)
+
+    conn =            
+      build_conn()    
+      |> assign(:user, user)
+      |> post("/v2/events/search/",
+        %{"not" => 
+          %{
+              "tags" => second_tag.name, 
+          }
+        }
+      )
+    assert [%{"id" => ^second_id}] = json_response(conn, 200)
+  end
+
   test "GET /v2/events/:id", %{conn: conn} do
     user = insert(:user)
     event = insert(:event)

@@ -18,7 +18,7 @@ defmodule KouekiWeb.AttributeController do
     {entries, page_count} = Attribute.search(params)
 
     conn
-    |> put_resp_header("X-Page-Count", to_string(page_count))
+    |> put_resp_header("x-page-count", to_string(page_count))
     |> json(AttributeView.render("attributes.json", %{attributes: entries}))
   end
 

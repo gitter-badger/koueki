@@ -30,7 +30,7 @@ defmodule Koueki.Factory do
 
   def tag_factory do
     %Koueki.Tag{
-      name: sequence(:name, &"タッグ #{&1}")
+      name: sequence(:name, &"Taggo #{&1}")
     }
   end
 end

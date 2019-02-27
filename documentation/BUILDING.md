@@ -71,6 +71,8 @@ Now you'll have the frontend compiled.
 
 ### Building the backend
 
+**Make sure you've configured your prod.secret.exs before doing this!**
+
 ```bash
 export MIX_ENV=prod
 
@@ -86,11 +88,17 @@ mix ecto.migrate
 ```bash
 mix Koueki.Org new "my organisation"
 # Look at the ID of the org it created
-mix Koueki.User new --orgid the_id
+mix Koueki.User new myusers@email.com --orgid the_id
 ```
 
 This will generate a new user and organisation, and give you a temporary password
 to log in.
+
+### Running
+
+```bash
+mix phx.server
+```
 
 ## Updating
 

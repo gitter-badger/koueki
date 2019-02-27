@@ -17,6 +17,18 @@ defmodule KouekiWeb.EventsController do
     TagView
   }
 
+  def list(conn, params) do
+    page = from(event in Event, preload: [:org, :tags, :attributes])
+    |> Repo.paginate(
+      page: Map.get(params, "page", 0),
+      page_size: Map.get(params, "limit", 20)
+    )
+
+    conn
+    |> put_resp_header("x-page-count", to_string(page.total_pages))
+    |> json(EventView.render("events.json", %{events: page.entries}))  
+  end
+
   def view(conn, %{"id" => id}, opts \\ [as: "event.json"]) do
     with %Event{} = event <- Repo.get(Event, id) do
       event = Event.load_assoc(event)
@@ -167,10 +179,10 @@ defmodule KouekiWeb.EventsController do
   end
 
   def search(conn, params) do
-    {entries, page_count} = Event.search(params)
+    {entries, page_count} = Event.Search.run(params)
 
     conn
-    |> put_resp_header("X-Page-Count", to_string(page_count))
+    |> put_resp_header("x-page-count", to_string(page_count))
     |> json(EventView.render("events.json", %{events: entries}))
   end
 
