@@ -51,7 +51,8 @@ defmodule Koueki.MixProject do
       {:timex, "~> 3.1"},
       {:scrivener_ecto, "~> 2.0"},
       {:logger_file_backend, "~> 0.0.10"},
-      {:bureaucrat, "~> 0.2.5"}
+      {:bureaucrat, "~> 0.2.5"},
+      {:httpoison, "~> 1.4"}
     ]
   end
 
