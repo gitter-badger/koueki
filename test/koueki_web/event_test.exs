@@ -94,7 +94,7 @@ defmodule KouekiWeb.EventsTest do
       |> assign(:user, user)
       |> post("/v2/events/search/", %{"or" => %{"tags" => [first_tag.name, second_tag.name]}})
 
-    assert [%{"id" => ^first_id}, %{"id" => ^second_id}] = json_response(conn, 200)
+    assert [%{}, %{"id" => ^second_id}] = json_response(conn, 200)
 
     conn =
       build_conn()
