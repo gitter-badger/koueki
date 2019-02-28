@@ -34,7 +34,8 @@ config :phoenix, :json_library, Jason
 
 config :koueki, :instance,
   name: "Koueki",
-  signup_enabled: true
+  signup_enabled: true,
+  sync_frequency: 60_000 * 1
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

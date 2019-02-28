@@ -1,5 +1,6 @@
-defmodule Koueki.HTTP.Adapters.MISP do
+defmodule Koueki.HTTPAdapters.MISP do
   alias Koueki.Server
+  require Logger
 
   def request(:get, %{} = server, path) do
     headers = generate_headers(server)
@@ -10,13 +11,13 @@ defmodule Koueki.HTTP.Adapters.MISP do
     |> HTTPoison.get(headers, opts)
   end
 
-  def request(:post, %{} = server, path) do
+  def request(:post, %{} = server, path, body) do
     headers = generate_headers(server)
     opts = generate_options(server)
 
     server
     |> get_full_url(path)
-    |> HTTPoison.post(headers, opts)
+    |> HTTPoison.post(body, headers, opts)
   end
 
   defp generate_headers(%{apikey: apikey}) do
@@ -69,7 +70,7 @@ defmodule Koueki.HTTP.Adapters.MISP do
         ssl_options
         |> Keyword.put(:cacertfile, filename)
       {:erorr, reason} ->
-        IO.error("Could not write cacert!")
+        Logger.error("Could not write cacert!")
     end
   end
 
@@ -89,7 +90,7 @@ defmodule Koueki.HTTP.Adapters.MISP do
         ssl_options
         |> Keyword.put(:certfile, filename)
       {:erorr, reason} ->
-        IO.error("Could not write client certt!")
+        Logger.error("Could not write client cert!")
     end
   end
 

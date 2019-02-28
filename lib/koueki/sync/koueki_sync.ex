@@ -1,4 +1,4 @@
-defmodule Koueki.Tasks.Sync.Koueki do
+defmodule Koueki.Sync.Koueki do
   use Task
 
   def start_link(arg) do

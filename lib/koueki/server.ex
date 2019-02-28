@@ -3,7 +3,7 @@ defmodule Koueki.Server do
   import Ecto.Changeset
 
   alias Koueki.{
-    HTTP,
+    HTTPAdapters,
     Org,
     Server,
     Repo
@@ -31,7 +31,7 @@ defmodule Koueki.Server do
     struct
     |> cast(params,
       [:url, :apikey, :name, :org_id, :pull_enabled, :push_enabled, :skip_ssl_validation,
-       :server_certificate, :client_certificate, :adapter,
+       :server_certificate, :client_certificate, :adapter, :last_sync
       ])
     |> validate_required([:url, :apikey, :name, :org_id, :adapter])
     |> validate_inclusion(:adapter, ["koueki", "misp"])
@@ -71,7 +71,7 @@ defmodule Koueki.Server do
 
   def maybe_get_remote_org(%{adapter: "misp"} = server) do
     # If we're using the MISP one it's a bit harder
-    case HTTP.Adapters.MISP.request(:get, server, "/organisations/index") do
+    case HTTPAdapters.MISP.request(:get, server, "/organisations/index") do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         {:ok, decoded} = Jason.decode(body)
         organisations = 

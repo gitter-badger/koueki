@@ -11,9 +11,10 @@ defmodule Koueki.Application do
       # Start the Ecto repository
       Koueki.Repo,
       # Start the endpoint when the application starts
-      KouekiWeb.Endpoint
+      KouekiWeb.Endpoint,
       # Starts a worker by calling: Koueki.Worker.start_link(arg)
       # {Koueki.Worker, arg},
+      {Koueki.Sync.Scheduler, []}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
