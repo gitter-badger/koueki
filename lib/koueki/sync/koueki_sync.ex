@@ -6,6 +6,5 @@ defmodule Koueki.Sync.Koueki do
   end
 
   def run(arg) do
-  
   end
 end

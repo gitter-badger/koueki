@@ -30,5 +30,4 @@ defmodule KouekiWeb.Status do
     |> put_status(403)
     |> json(%{error: message})
   end
-
 end

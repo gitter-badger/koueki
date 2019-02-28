@@ -27,7 +27,7 @@ defmodule Koueki.HTTPAdapters.MISP do
       {"Authorization", apikey}
     ]
   end
-    
+
   defp get_full_url(%{url: url}, path) do
     url
     |> URI.merge(path)
@@ -56,6 +56,7 @@ defmodule Koueki.HTTPAdapters.MISP do
       []
       |> add_server_certificate(server)
       |> add_client_certificate(server)
+
     Keyword.put(opts, :ssl, ssl_opts)
   end
 
@@ -65,10 +66,12 @@ defmodule Koueki.HTTPAdapters.MISP do
 
   defp add_server_certificate(ssl_options, %{id: id, server_certificate: server_certificate}) do
     filename = "server.#{id}.cacert"
+
     case File.write(filename, server_certificate) do
       :ok ->
         ssl_options
         |> Keyword.put(:cacertfile, filename)
+
       {:erorr, reason} ->
         Logger.error("Could not write cacert!")
     end
@@ -89,6 +92,7 @@ defmodule Koueki.HTTPAdapters.MISP do
       :ok ->
         ssl_options
         |> Keyword.put(:certfile, filename)
+
       {:erorr, reason} ->
         Logger.error("Could not write client cert!")
     end
@@ -97,5 +101,4 @@ defmodule Koueki.HTTPAdapters.MISP do
   defp add_client_certificate(ssl_options, _) do
     ssl_options
   end
-
 end

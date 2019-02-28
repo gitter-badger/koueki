@@ -12,10 +12,11 @@ defmodule KouekiWeb.OrgController do
   }
 
   def list(conn, _) do
-    orgs = 
+    orgs =
       from(org in Org)
       |> Repo.all()
+
     conn
     |> json(OrgView.render("orgs.json", %{orgs: orgs}))
   end
-end    
+end

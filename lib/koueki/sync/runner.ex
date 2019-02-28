@@ -14,6 +14,7 @@ defmodule Koueki.Sync.Runner do
       case server.adapter do
         "misp" ->
           {Koueki.Sync.MISP, server.id}
+
         "koueki" ->
           {Koueki.Sync.Koueki, server.id}
       end

@@ -16,6 +16,5 @@ defmodule Koueki.Repo.Migrations.AddServerTable do
     end
 
     create unique_index(:servers, [:uuid, :name])
-    
   end
 end

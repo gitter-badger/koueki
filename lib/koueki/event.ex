@@ -82,11 +82,35 @@ defmodule Koueki.Event do
       :analysis,
       :date,
       :distribution,
-      :org_id
+      :org_id,
+      :uuid
     ])
-    |> cast_assoc(:attributes, with: &Attribute.changeset/2)
+    |> cast_assoc(:attributes, with: &Attribute.changeset/2, on_replace: :nilify)
     |> put_assoc(:tags, Tag.find_or_create(Map.get(params, "tags", [])))
     |> validate()
+  end
+
+  @doc """
+  Used during sync
+  When we recieve an event, either it's totally unknown or we have the UUID
+  If it's unknown, we want to create a new one
+  If it's know we want to cast over its assocs
+  """
+  def find_or_create(%{"uuid" => uuid} = params) do
+    with %Event{} = event <- Repo.one(
+      from event in Event, where: event.uuid == ^uuid,
+      preload: [:org, :tags, attributes: :tags]
+    ) do
+      event
+      |> changeset(params)
+    else
+      nil ->
+        changeset(%Event{}, params)
+    end
+  end
+
+  def find_or_create(params) do
+    changeset(%Event{}, params)
   end
 
   def add_tags_changeset(struct, %{tags: tags}) do

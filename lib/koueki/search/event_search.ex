@@ -47,16 +47,20 @@ defmodule Koueki.Event.Search do
 
     conditions = generate(search_params, condition: initial_condition)
 
-    event_ids = from(event in Koueki.Event.Search, select: event.id, where: ^conditions)
+    event_ids =
+      from(
+        event in Koueki.Event.Search,
+        select: event.id,
+        where: ^conditions
+      )
 
     page =
       from(
         event in Koueki.Event,
         join: s in subquery(event_ids),
         on: s.id == event.id,
-        left_join: attributes in assoc(event, :attributes),
-        left_join: attr_tags in assoc(attributes, :tags),
-        preload: [:org, :tags, attributes: {attributes, tags: attr_tags}]
+        preload: [:org, :tags, attributes: :tags],
+        order_by: [desc: event.id]
       )
       |> Koueki.Repo.paginate(
         page: Map.get(params, "page", 0),

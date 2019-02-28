@@ -1,5 +1,5 @@
 import React from "react";
-import { Form } from "semantic-ui-react";
+import { Form, Button } from "semantic-ui-react";
 import { get } from "utils";
 import { NavLink } from "react-router-dom";
 import ReactTable from "react-table";
@@ -25,10 +25,16 @@ export default class ServerList extends React.Component {
         ];
 
         return (
-            <ReactTable
-                data={this.state.servers}    
-                columns={columns}
-            />            
+            <section>
+                <NavLink to="/web/servers/create">  
+                    <Button content="Create" icon="add" color="grey" />
+                </NavLink>
+            
+                <ReactTable
+                    data={this.state.servers}    
+                    columns={columns}
+                />            
+            </section>
         );
     }    
 }

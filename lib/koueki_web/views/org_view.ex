@@ -4,7 +4,7 @@ defmodule KouekiWeb.OrgView do
   def render("orgs.json", %{orgs: orgs}) do
     render_many(orgs, KouekiWeb.OrgView, "org.json")
   end
-    
+
   def render("org.json", %{org: org}) do
     %{
       id: org.id,

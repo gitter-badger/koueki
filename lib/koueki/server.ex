@@ -29,10 +29,22 @@ defmodule Koueki.Server do
 
   def changeset(struct, params) do
     struct
-    |> cast(params,
-      [:url, :apikey, :name, :org_id, :pull_enabled, :push_enabled, :skip_ssl_validation,
-       :server_certificate, :client_certificate, :adapter, :last_sync
-      ])
+    |> cast(
+      params,
+      [
+        :url,
+        :apikey,
+        :name,
+        :org_id,
+        :pull_enabled,
+        :push_enabled,
+        :skip_ssl_validation,
+        :server_certificate,
+        :client_certificate,
+        :adapter,
+        :last_sync
+      ]
+    )
     |> validate_required([:url, :apikey, :name, :org_id, :adapter])
     |> validate_inclusion(:adapter, ["koueki", "misp"])
     |> unique_constraint(:url)
@@ -44,10 +56,21 @@ defmodule Koueki.Server do
   """
   def no_save_changeset(struct, params) do
     struct
-    |> cast(params,
-      [:url, :apikey, :name, :org_id, :pull_enabled, :push_enabled, :skip_ssl_validation,
-       :server_certificate, :client_certificate, :adapter,
-      ])
+    |> cast(
+      params,
+      [
+        :url,
+        :apikey,
+        :name,
+        :org_id,
+        :pull_enabled,
+        :push_enabled,
+        :skip_ssl_validation,
+        :server_certificate,
+        :client_certificate,
+        :adapter
+      ]
+    )
     |> validate_required([:url, :apikey, :adapter])
     |> validate_inclusion(:adapter, ["koueki", "misp"])
   end
@@ -62,8 +85,10 @@ defmodule Koueki.Server do
     case HTTPoison.get(owner_url) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         {:ok, decoded} = Jason.decode(body)
+
       {:ok, %HTTPoison.Response{status_code: 403}} ->
         {:error, :permission_denied}
+
       {:error, %HTTPoison.Error{reason: reason}} ->
         {:error, reason}
     end
@@ -74,7 +99,8 @@ defmodule Koueki.Server do
     case HTTPAdapters.MISP.request(:get, server, "/organisations/index") do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         {:ok, decoded} = Jason.decode(body)
-        organisations = 
+
+        organisations =
           decoded
           |> Enum.map(fn x -> x["Organisation"] end)
           |> Enum.map(fn org_json ->
@@ -84,12 +110,15 @@ defmodule Koueki.Server do
               %Org{} = org -> org
               %Ecto.Changeset{} = org -> Repo.insert(org)
             end
-          end)  
+          end)
+
         {:ok, organisations}
+
       {:ok, %HTTPoison.Response{status_code: 403}} ->
         {:error, :permission_denied}
+
       {:error, %HTTPoison.Error{reason: reason}} ->
         {:error, reason}
     end
   end
-end  
+end

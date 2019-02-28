@@ -105,6 +105,5 @@ defmodule KouekiWeb.Router do
 
     # Org level 
     get "/orgs", OrgController, :list
-  
   end
 end

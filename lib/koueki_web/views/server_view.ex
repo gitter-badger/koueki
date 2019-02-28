@@ -11,7 +11,7 @@ defmodule KouekiWeb.ServerView do
       name: server.name,
       uuid: server.uuid,
       url: server.url,
-      last_sync: server.last_sync,
+      last_sync: server.last_sync
     }
   end
 end

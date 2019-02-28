@@ -26,7 +26,7 @@ defmodule KouekiWeb.InstanceController do
       conn
       |> json(KouekiWeb.OrgView.render("org.json", %{org: org}))
     else
-      nil -> 
+      nil ->
         conn
         |> put_status(404)
         |> json(%{"error" => "No local organisation"})
