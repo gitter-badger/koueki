@@ -19,6 +19,7 @@ const routes = [
         { path: "/:id/attributes/add", component: () => import("attributes/new") }
     ]},
     { prefix: "/servers", components: [
+        { path: "/", component: () => import("servers/index") },
         { path: "/create", component: () => import("servers/new") }
     ]}
 ];
