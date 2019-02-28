@@ -16,12 +16,12 @@ defmodule Koueki.Server do
     field :url, :string
     field :apikey, :string
     field :name, :string
-    field :last_sync, :utc_datetime, default: ~N[1970-01-01 00:00:00]
+    field :last_sync, :utc_datetime
     field :push_enabled, :boolean, default: true
     field :pull_enabled, :boolean, default: true
     field :skip_ssl_validation, :boolean, default: false
-    field :server_certificate, :string
-    field :client_certificate, :string
+    field :server_certificate, :string, default: nil
+    field :client_certificate, :string, default: nil
     field :adapter, :string
 
     belongs_to :org, Koueki.Org
@@ -33,18 +33,23 @@ defmodule Koueki.Server do
       [:url, :apikey, :name, :org_id, :pull_enabled, :push_enabled, :skip_ssl_validation,
        :server_certificate, :client_certificate, :adapter,
       ])
-    |> validate_org()
     |> validate_required([:url, :apikey, :name, :org_id, :adapter])
     |> validate_inclusion(:adapter, ["koueki", "misp"])
+    |> unique_constraint(:url)
+    |> unique_constraint(:name)
   end
 
-  defp validate_org(%Ecto.Changeset{changes: %{org_id: org_id}} = changeset) do
-    with %Org{} = org <- Repo.get(Org, org_id) do
-      changeset
-    else
-      nil ->
-        add_error(changeset, :org_id, "Org #{org_id} not found")
-    end
+  @doc """
+  Mainly for checking orgs before saving the server to the DB
+  """
+  def no_save_changeset(struct, params) do
+    struct
+    |> cast(params,
+      [:url, :apikey, :name, :org_id, :pull_enabled, :push_enabled, :skip_ssl_validation,
+       :server_certificate, :client_certificate, :adapter,
+      ])
+    |> validate_required([:url, :apikey, :adapter])
+    |> validate_inclusion(:adapter, ["koueki", "misp"])
   end
 
   def maybe_get_remote_org(%{url: url, adapter: "koueki"} = server) do
@@ -79,8 +84,8 @@ defmodule Koueki.Server do
               %Org{} = org -> org
               %Ecto.Changeset{} = org -> Repo.insert(org)
             end
-          end)
-        {:ok, :require_manual}
+          end)  
+        {:ok, organisations}
       {:ok, %HTTPoison.Response{status_code: 403}} ->
         {:error, :permission_denied}
       {:error, %HTTPoison.Error{reason: reason}} ->

@@ -101,6 +101,7 @@ defmodule KouekiWeb.Router do
     # Server level
     get "/servers", ServerController, :list
     post "/servers", ServerController, :create
+    post "/servers/orgs/pull", ServerController, :pull_orgs
 
     # Org level 
     get "/orgs", OrgController, :list

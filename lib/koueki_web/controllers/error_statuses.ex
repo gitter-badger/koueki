@@ -24,4 +24,11 @@ defmodule KouekiWeb.Status do
     |> put_status(400)
     |> json(%{error: KouekiWeb.ErrorFormatter.format_validation_error(changeset)})
   end
+
+  def permission_denied(conn, message) do
+    conn
+    |> put_status(403)
+    |> json(%{error: message})
+  end
+
 end

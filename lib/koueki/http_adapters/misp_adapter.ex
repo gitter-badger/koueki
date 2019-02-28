@@ -73,6 +73,10 @@ defmodule Koueki.HTTP.Adapters.MISP do
     end
   end
 
+  defp add_server_certificate(ssl_options, _) do
+    ssl_options
+  end
+
   defp add_client_certificate(ssl_options, %{client_certificate: nil}) do
     ssl_options
   end
@@ -88,4 +92,9 @@ defmodule Koueki.HTTP.Adapters.MISP do
         IO.error("Could not write client certt!")
     end
   end
+
+  defp add_client_certificate(ssl_options, _) do
+    ssl_options
+  end
+
 end

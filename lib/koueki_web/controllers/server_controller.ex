@@ -4,7 +4,8 @@ defmodule KouekiWeb.ServerController do
   import Ecto.Query
 
   alias Koueki.{
-    Server
+    Server,
+    Repo
   }
 
   alias KouekiWeb.{
@@ -27,7 +28,22 @@ defmodule KouekiWeb.ServerController do
       {:ok, server} = Repo.insert(changeset)
       conn  
       |> put_status(201)
-      |> json(Server.render("server.json", %{server: server}))
+      |> json(ServerView.render("server.json", %{server: server}))
+    else
+      Status.validation_error(conn, changeset)
+    end
+  end 
+
+  def pull_orgs(conn, params) do
+    changeset = Server.no_save_changeset(%Server{}, params)
+    if changeset.valid? do
+      result = Server.maybe_get_remote_org(changeset.changes)
+      case result do
+        {:ok, orgs} ->
+          conn |> json(%{"ok" => true, "message" => "Pulled #{Enum.count(orgs)} orgs"})
+        {:error, :permission_denied} ->
+          Status.permission_denied(conn, "Provided credentials were incorrect!")
+      end
     else
       Status.validation_error(conn, changeset)
     end

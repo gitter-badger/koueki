@@ -25,7 +25,7 @@ export const delete_req = (url) => fetch(getURL(url), {method: "DELETE", ...getH
 export const format_error = ({ error: errors }) => {
   let error_message = "";
   Object.keys(errors).forEach(key => {
-    error_message += `${key}: ${errors[key].join(", ")}\n`;
+    error_message += `${key}: ${errors[key].join(", ")}, `;
   });
   return error_message;
 }
