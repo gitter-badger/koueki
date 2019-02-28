@@ -2,6 +2,11 @@ defmodule Koueki.Org do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Koueki.{
+    Org,
+    Repo
+  }
+
   schema "orgs" do
     field :uuid, Ecto.UUID, autogenerate: true
     field :name, :string
@@ -16,5 +21,20 @@ defmodule Koueki.Org do
     |> cast(params, [:name, :description, :local, :uuid])
     |> validate_required([:name])
     |> validate_length(:name, min: 1)
+    |> unique_constraint(:uuid)
+    |> unique_constraint(:name)
+  end
+
+  def get_or_create(%{uuid: uuid} = params) do
+    with %Org{} = org <- Repo.get_by(Org, uuid: uuid) do
+      org
+    else
+      nil ->
+        changeset(%Org{}, params)
+    end
+  end
+
+  def get_or_create(params) do
+    changeset(%Org{}, params)
   end
 end

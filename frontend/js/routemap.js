@@ -18,6 +18,9 @@ const routes = [
         { path: "/:id", component: () => import("events/view") },
         { path: "/:id/attributes/add", component: () => import("attributes/new") }
     ]},
+    { prefix: "/servers", components: [
+        { path: "/create", component: () => import("servers/new") }
+    ]}
 ];
 
 const process_components = (components, base_route="") => {

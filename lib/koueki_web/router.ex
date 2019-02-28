@@ -34,6 +34,7 @@ defmodule KouekiWeb.Router do
     pipe_through :api
 
     get "/config", InstanceController, :config
+    get "/owner", InstanceController, :owner
   end
 
   scope "/auth", KouekiWeb do
@@ -96,5 +97,13 @@ defmodule KouekiWeb.Router do
     get "/tags/:id", TagController, :view
     post "/tags", TagController, :create
     post "/tags/search", TagController, :search
+
+    # Server level
+    get "/servers", ServerController, :list
+    post "/servers", ServerController, :create
+
+    # Org level 
+    get "/orgs", OrgController, :list
+  
   end
 end
