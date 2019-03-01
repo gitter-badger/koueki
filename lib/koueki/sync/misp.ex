@@ -31,9 +31,10 @@ defmodule Koueki.Sync.MISP do
 
       {:ok, post_body} =
         %{last: "#{last_sync}"}
-        |> Jason.encode() 
+        |> Jason.encode()
 
       resp = HTTPAdapters.MISP.request(:post, server, sync_url, post_body)
+
       case resp do
         {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
           {:ok, body} = Jason.decode(body)
@@ -47,28 +48,30 @@ defmodule Koueki.Sync.MISP do
               |> Map.get("Event")
 
             # First, get our local event, or a new struct if we don't have one
-            local_event = Repo.one(from event in Event,
-              where: event.uuid == ^event_json["uuid"],
-              preload: [:org, :tags, attributes: :tags]
-            )
+            local_event =
+              Repo.one(
+                from event in Event,
+                  where: event.uuid == ^event_json["uuid"],
+                  preload: [:org, :tags, attributes: :tags]
+              )
 
-            remote_event_params = 
+            remote_event_params =
               event_json
               |> Event.normalise_from_misp()
               |> Event.resolve_inbound_attributes(local_event)
 
             with %Event{} <- local_event do
               # Event exists in our DB, udpdate it accordingly
-              {:ok, event} = 
+              {:ok, event} =
                 local_event
                 |> Event.changeset(remote_event_params)
                 |> Repo.update()
             else
               nil ->
-              {:ok, event} =
-                %Event{}
-                |> Event.changeset(remote_event_params)
-                |> Repo.insert()
+                {:ok, event} =
+                  %Event{}
+                  |> Event.changeset(remote_event_params)
+                  |> Repo.insert()
             end
           end)
 

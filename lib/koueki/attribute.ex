@@ -145,19 +145,19 @@ defmodule Koueki.Attribute do
   """
   def resolve_from_inbound_event(local_attributes, remote_attributes) do
     remote_attributes
-    |> Enum.map(
-      fn attribute ->
-        resolve_attribute_data(local_attributes, attribute)
-      end)
+    |> Enum.map(fn attribute ->
+      resolve_attribute_data(local_attributes, attribute)
+    end)
   end
 
   defp resolve_attribute_data(local_attributes, remote_attribute) do
-    local_attributes 
+    local_attributes
     |> Enum.filter(fn x -> x.uuid == remote_attribute["uuid"] end)
     |> case do
       [local_match] ->
         remote_attribute
         |> Map.put("id", local_match.id)
+
       [] ->
         remote_attribute
         |> Map.delete("id")

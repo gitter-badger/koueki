@@ -9,7 +9,8 @@ defmodule Koueki.Event do
     Attribute,
     Tag,
     Repo,
-    Org
+    Org,
+    User
   }
 
   alias Ecto.Changeset
@@ -125,13 +126,41 @@ defmodule Koueki.Event do
     |> put_change(:date, Timex.today())
   end
 
-  def resolve_inbound_attributes(%{"attributes" => remote_attrs} = event_params, %Event{attributes: local_attrs}) do
+  def resolve_inbound_attributes(%{"attributes" => remote_attrs} = event_params, %Event{
+        attributes: local_attrs
+      }) do
     event_params
-    |> Map.put("attributes", Attribute.resolve_from_inbound_event(local_attrs, remote_attrs)) 
+    |> Map.put("attributes", Attribute.resolve_from_inbound_event(local_attrs, remote_attrs))
   end
 
   def resolve_inbound_attributes(event_params, nil) do
     # Local event does not exist
     resolve_inbound_attributes(event_params, %Event{attributes: []})
+  end
+
+  @doc """
+  Is a given event visible for a user?
+  """
+  def visible?(%Event{} = event, %User{} = user) do
+    case event.distribution do
+      0 ->
+        # This organisation only
+        event.org_id == user.org_id
+      1 ->
+        # This community only (i.e on this instance)
+        true
+      2 ->
+        # Connected communities
+        # If you're on this instance you're connected to our community, 常考
+        true
+      3 ->
+        # All communities (duh)
+        true
+      4 ->
+        # Member of sharing group
+        # FUGG
+        # FIXME when I've implemented this
+        true
+    end
   end
 end

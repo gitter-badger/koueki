@@ -14,9 +14,17 @@ defmodule KouekiWeb.ServerController do
     Utils
   }
 
+  @doc """
+  List all sync server owned by the user's organisation
+  """
   def list(conn, _) do
+    user = Utils.get_user(conn)
+
     servers =
-      from(server in Server, preload: [:org])
+      from(server in Server,
+        preload: [:org],
+        where: server.org_id == ^user.org_id
+      )
       |> Repo.all()
 
     conn
