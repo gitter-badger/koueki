@@ -9,7 +9,7 @@ class NewServer extends React.PureComponent {
     state = {
         name: "", url: "", apikey: "", push_enabled: true, pull_enabled: true,
         skip_ssl_validation: false, server_certificate: null,
-        client_certificate: null, adapter: "misp", org_id: null,
+        client_certificate: null, adapter: "misp", 
         enable_client_cert: false, enable_server_cert: false
     }
 
@@ -30,26 +30,6 @@ class NewServer extends React.PureComponent {
         if (resp.status == 201) {
             toast.success("Created server")
             this.props.history.push("/web/servers");
-        } else {
-            toast.error(`Server says: ${resp.status}`);
-            toast.error(format_error(json));
-        }
-    }
-
-    pullOrgs = async () => {
-        toast.info("Attempting to pull remote orgs...");
-        const { name, url, apikey, push_enabled, pull_enabled, skip_ssl_validation,
-                server_certificate, client_certificate, adapter } = this.state;
-
-        const postBody = {
-            name, url, apikey, push_enabled, pull_enabled, skip_ssl_validation,
-            server_certificate, client_certificate, adapter
-        };
-
-        let resp = await post("/v2/servers/orgs/pull", postBody);
-        let json = await resp.json();
-        if (resp.status == 200) {
-            toast.success("Pulled organisations")
         } else {
             toast.error(`Server says: ${resp.status}`);
             toast.error(format_error(json));
@@ -91,19 +71,6 @@ class NewServer extends React.PureComponent {
                     ]}
                 />
 
-
-
-                <OrgPicker
-                    value={this.state.org_id}
-                    label="Organisation"
-                    name="org_id"
-                    onChange={this.onChange}
-                />
-                
-                <Form.Button content="Pull remote organisations"
-                    icon="arrow down" color="grey" size="small"
-                    type="button" onClick={this.pullOrgs}
-                />
 
                 <Form.Group>
                     <Form.Checkbox

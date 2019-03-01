@@ -10,7 +10,8 @@ defmodule KouekiWeb.ServerController do
 
   alias KouekiWeb.{
     ServerView,
-    Status
+    Status,
+    Utils
   }
 
   def list(conn, _) do
@@ -23,6 +24,10 @@ defmodule KouekiWeb.ServerController do
   end
 
   def create(conn, params) do
+    user = Utils.get_user(conn)
+
+    params = Map.put(params, "org_id", user.org_id)
+
     changeset = Server.changeset(%Server{}, params)
 
     if changeset.valid? do
@@ -31,24 +36,6 @@ defmodule KouekiWeb.ServerController do
       conn
       |> put_status(201)
       |> json(ServerView.render("server.json", %{server: server}))
-    else
-      Status.validation_error(conn, changeset)
-    end
-  end
-
-  def pull_orgs(conn, params) do
-    changeset = Server.no_save_changeset(%Server{}, params)
-
-    if changeset.valid? do
-      result = Server.maybe_get_remote_org(changeset.changes)
-
-      case result do
-        {:ok, orgs} ->
-          conn |> json(%{"ok" => true, "message" => "Pulled #{Enum.count(orgs)} orgs"})
-
-        {:error, :permission_denied} ->
-          Status.permission_denied(conn, "Provided credentials were incorrect!")
-      end
     else
       Status.validation_error(conn, changeset)
     end

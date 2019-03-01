@@ -1,6 +1,6 @@
 import React from "react";
 import { Form, Button } from "semantic-ui-react";
-import { get } from "utils";
+import { get, delete_req } from "utils";
 import { NavLink } from "react-router-dom";
 import ReactTable from "react-table";
 

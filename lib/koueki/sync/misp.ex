@@ -21,19 +21,17 @@ defmodule Koueki.Sync.MISP do
   end
 
   def run(arg) do
-    with %Server{} = server <- Repo.get(Server, arg) do
+    with %Server{pull_enabled: true} = server <- Repo.get(Server, arg) do
       sync_url =
         server.url
         |> URI.merge("/events/restSearch")
         |> URI.to_string()
 
       last_sync = DateTime.to_unix(server.last_sync)
-      # Give a minute's leeway just in case
-      seconds_since_last = DateTime.to_unix(DateTime.utc_now()) - last_sync + 60
 
       {:ok, post_body} =
-        %{last: "#{seconds_since_last}s"}
-        |> Jason.encode()
+        %{last: "#{last_sync}"}
+        |> Jason.encode() 
 
       resp = HTTPAdapters.MISP.request(:post, server, sync_url, post_body)
       case resp do

@@ -35,6 +35,7 @@ defmodule Koueki.Attribute do
   def normalise_from_misp(%{} = params) do
     params
     |> Map.put("tags", Map.get(params, "Tag", []))
+    |> Map.delete("Tag")
   end
 
   def normalise_from_misp(params) when is_list(params) do
@@ -151,8 +152,6 @@ defmodule Koueki.Attribute do
   end
 
   defp resolve_attribute_data(local_attributes, remote_attribute) do
-    IO.inspect local_attributes
-    IO.inspect remote_attribute
     local_attributes 
     |> Enum.filter(fn x -> x.uuid == remote_attribute["uuid"] end)
     |> case do

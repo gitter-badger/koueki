@@ -80,8 +80,6 @@ defmodule Koueki.Event do
   end
 
   def changeset(struct, params) do
-    IO.inspect struct
-    IO.inspect params
     struct
     |> cast(params, [
       :published,
@@ -134,6 +132,6 @@ defmodule Koueki.Event do
 
   def resolve_inbound_attributes(event_params, nil) do
     # Local event does not exist
-    resolve_inbound_attributes(event_params, %Changeset{data: %{}})
+    resolve_inbound_attributes(event_params, %Event{attributes: []})
   end
 end
