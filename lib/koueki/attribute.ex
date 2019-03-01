@@ -43,7 +43,7 @@ defmodule Koueki.Attribute do
 
   def changeset(struct, params) do
     struct
-    |> cast(params, [:type, :category, :to_ids, :distribution, :comment, :value, :event_id])
+    |> cast(params, [:type, :category, :to_ids, :distribution, :comment, :value, :event_id, :uuid])
     |> unique_constraint(:attribute_is_unique,
       name: :attribute_is_unique_constraint,
       message: "Another attribute with a matching (value, type, category) exists on this event"
@@ -133,4 +133,35 @@ defmodule Koueki.Attribute do
   end
 
   defp limit_category(query, _), do: query
+
+  @doc """
+  Given a list of attributes currently existing on an event, and a list of
+  attributes coming inbound from a remote server, resolve the final data
+
+  The general idea is as follows:
+  - If remote.uuid exists in local, assign the ID from local.id 
+  - If remote.uuid does NOT exist in local, changeset, remove ID field, and insert
+  """
+  def resolve_from_inbound_event(local_attributes, remote_attributes) do
+    remote_attributes
+    |> Enum.map(
+      fn attribute ->
+        resolve_attribute_data(local_attributes, attribute)
+      end)
+  end
+
+  defp resolve_attribute_data(local_attributes, remote_attribute) do
+    IO.inspect local_attributes
+    IO.inspect remote_attribute
+    local_attributes 
+    |> Enum.filter(fn x -> x.uuid == remote_attribute["uuid"] end)
+    |> case do
+      [local_match] ->
+        remote_attribute
+        |> Map.put("id", local_match.id)
+      [] ->
+        remote_attribute
+        |> Map.delete("id")
+    end
+  end
 end

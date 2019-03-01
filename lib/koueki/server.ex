@@ -105,7 +105,7 @@ defmodule Koueki.Server do
           |> Enum.map(fn x -> x["Organisation"] end)
           |> Enum.map(fn org_json ->
             org_json
-            |> Org.get_or_create()
+            |> Org.find_or_create()
             |> case do
               %Org{} = org -> org
               %Ecto.Changeset{} = org -> Repo.insert(org)

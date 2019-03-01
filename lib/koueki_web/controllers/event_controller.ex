@@ -43,7 +43,7 @@ defmodule KouekiWeb.EventsController do
 
   def create(conn, %{} = params, opts \\ [as: "event.json"]) do
     user = Utils.get_user(conn)
-    params = Map.put(params, "org_id", user.org_id)
+    params = Map.put(params, "org", user.org)
 
     event = Event.changeset(%Event{}, params)
 

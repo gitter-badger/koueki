@@ -8,7 +8,8 @@ defmodule Koueki.Event do
     Event,
     Attribute,
     Tag,
-    Repo
+    Repo,
+    Org
   }
 
   alias Ecto.Changeset
@@ -28,7 +29,7 @@ defmodule Koueki.Event do
     timestamps()
 
     belongs_to :org, Koueki.Org
-    has_many :attributes, Koueki.Attribute
+    has_many :attributes, Koueki.Attribute, on_replace: :delete
     many_to_many :tags, Koueki.Tag, join_through: "event_tags"
   end
 
@@ -43,7 +44,12 @@ defmodule Koueki.Event do
       |> Map.get("Attribute", [])
       |> Attribute.normalise_from_misp()
     )
+    |> Map.delete("Attribute")
     |> Map.put("tags", Map.get(params, "Tag", []))
+    |> Map.delete("Tag")
+    |> Map.put("org", Map.get(params, "Orgc", %{}))
+    |> Map.delete("Org")
+    |> Map.delete("Orgc")
   end
 
   def get_with_preload(id, preload \\ []) do
@@ -74,6 +80,8 @@ defmodule Koueki.Event do
   end
 
   def changeset(struct, params) do
+    IO.inspect struct
+    IO.inspect params
     struct
     |> cast(params, [
       :published,
@@ -82,35 +90,12 @@ defmodule Koueki.Event do
       :analysis,
       :date,
       :distribution,
-      :org_id,
       :uuid
     ])
-    |> cast_assoc(:attributes, with: &Attribute.changeset/2, on_replace: :nilify)
+    |> cast_assoc(:attributes, with: &Attribute.changeset/2)
     |> put_assoc(:tags, Tag.find_or_create(Map.get(params, "tags", [])))
+    |> put_assoc(:org, Org.find_or_create(Map.get(params, "org")))
     |> validate()
-  end
-
-  @doc """
-  Used during sync
-  When we recieve an event, either it's totally unknown or we have the UUID
-  If it's unknown, we want to create a new one
-  If it's know we want to cast over its assocs
-  """
-  def find_or_create(%{"uuid" => uuid} = params) do
-    with %Event{} = event <- Repo.one(
-      from event in Event, where: event.uuid == ^uuid,
-      preload: [:org, :tags, attributes: :tags]
-    ) do
-      event
-      |> changeset(params)
-    else
-      nil ->
-        changeset(%Event{}, params)
-    end
-  end
-
-  def find_or_create(params) do
-    changeset(%Event{}, params)
   end
 
   def add_tags_changeset(struct, %{tags: tags}) do
@@ -140,5 +125,15 @@ defmodule Koueki.Event do
   defp validate_date(%Changeset{} = changeset) do
     changeset
     |> put_change(:date, Timex.today())
+  end
+
+  def resolve_inbound_attributes(%{"attributes" => remote_attrs} = event_params, %Event{attributes: local_attrs}) do
+    event_params
+    |> Map.put("attributes", Attribute.resolve_from_inbound_event(local_attrs, remote_attrs)) 
+  end
+
+  def resolve_inbound_attributes(event_params, nil) do
+    # Local event does not exist
+    resolve_inbound_attributes(event_params, %Changeset{data: %{}})
   end
 end

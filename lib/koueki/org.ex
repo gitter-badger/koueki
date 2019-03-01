@@ -25,7 +25,9 @@ defmodule Koueki.Org do
     |> unique_constraint(:name)
   end
 
-  def get_or_create(%{uuid: uuid} = params) do
+  def find_or_create(%Org{} = org), do: org
+
+  def find_or_create(%{"uuid" => uuid} = params) do
     with %Org{} = org <- Repo.get_by(Org, uuid: uuid) do
       org
     else
@@ -34,7 +36,7 @@ defmodule Koueki.Org do
     end
   end
 
-  def get_or_create(params) do
+  def find_or_create(params) do
     changeset(%Org{}, params)
   end
 end
