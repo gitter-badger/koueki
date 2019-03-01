@@ -10,7 +10,8 @@ defmodule Koueki.Event do
     Tag,
     Repo,
     Org,
-    User
+    User, 
+    SharingGroup
   }
 
   alias Ecto.Changeset
@@ -30,6 +31,7 @@ defmodule Koueki.Event do
     timestamps()
 
     belongs_to :org, Koueki.Org
+    belongs_to :sharing_group, Koueki.SharingGroup
     has_many :attributes, Koueki.Attribute, on_replace: :delete
     many_to_many :tags, Koueki.Tag, join_through: "event_tags"
   end
@@ -51,7 +53,16 @@ defmodule Koueki.Event do
     |> Map.put("org", Map.get(params, "Orgc", %{}))
     |> Map.delete("Org")
     |> Map.delete("Orgc")
+    |> maybe_normalise_sharing_groups()
   end
+
+  defp maybe_normalise_sharing_groups(%{"SharingGroup" => group} = params) do
+    params
+    |> Map.put("sharing_group", SharingGroup.normalise_from_misp(group))
+    |> Map.delete("SharingGroup")
+  end
+
+  defp maybe_normalise_sharing_groups(params), do: params
 
   def get_with_preload(id, preload \\ []) do
     Repo.one(
@@ -94,6 +105,7 @@ defmodule Koueki.Event do
     |> cast_assoc(:attributes, with: &Attribute.changeset/2)
     |> put_assoc(:tags, Tag.find_or_create(Map.get(params, "tags", [])))
     |> put_assoc(:org, Org.find_or_create(Map.get(params, "org")))
+    |> maybe_add_sharing_group(params)
     |> validate()
   end
 
@@ -162,5 +174,14 @@ defmodule Koueki.Event do
         # FIXME when I've implemented this
         true
     end
+  end
+
+  defp maybe_add_sharing_group(%Changeset{} = changeset, %{"sharing_group" => sharing_group}) do
+    changeset
+    |> put_assoc(:sharing_group, SharingGroup.find_or_create(sharing_group))
+  end
+
+  defp maybe_add_sharing_group(%Changeset{} = changeset, _) do
+    changeset
   end
 end
