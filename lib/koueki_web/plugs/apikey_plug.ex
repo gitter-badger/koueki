@@ -1,5 +1,6 @@
 defmodule KouekiWeb.Plugs.APIKeyPlug do
   import Plug.Conn
+  import Ecto.Query
 
   alias Koueki.{
     User,
@@ -12,7 +13,7 @@ defmodule KouekiWeb.Plugs.APIKeyPlug do
 
   def call(conn, _) do
     with [auth_header] <- get_req_header(conn, "authorization"),
-         %User{} = user <- Repo.get_by(User, apikey: auth_header) do
+         %User{} = user <- Repo.one(from user in User, where: user.apikey == ^auth_header, preload: [:org]) do
       conn
       |> assign(:user, user)
     else

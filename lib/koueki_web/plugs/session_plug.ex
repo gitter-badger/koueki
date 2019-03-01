@@ -1,5 +1,6 @@
 defmodule KouekiWeb.Plugs.SessionCookiePlug do
   import Plug.Conn
+  import Ecto.Query
 
   alias Koueki.{
     User,
@@ -20,7 +21,7 @@ defmodule KouekiWeb.Plugs.SessionCookiePlug do
       conn
     else
       conn
-      |> assign(:user, Repo.get(User, user_id))
+      |> assign(:user, Repo.one(from user in User, where: user.id == ^user_id, preload: [:org]))
     end
   end
 end
