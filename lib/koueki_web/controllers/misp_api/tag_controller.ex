@@ -13,7 +13,7 @@ defmodule KouekiWeb.MISPAPI.TagController do
 
   alias KouekiWeb.{
     TagController,
-    Status
+    ErrorStatus
   }
 
   def view(conn, params) do
@@ -75,8 +75,8 @@ defmodule KouekiWeb.MISPAPI.TagController do
       {:ok, object} = Repo.update(changeset)
       tag_attached(conn, object)
     else
-      {:not_found, uuid} -> Status.not_found(conn, "Object #{uuid} not found")
-      nil -> Status.not_found(conn, "Tag #{tag_id} not found")
+      {:not_found, uuid} -> ErrorStatus.not_found(conn, "Object #{uuid} not found")
+      nil -> ErrorStatus.not_found(conn, "Tag #{tag_id} not found")
     end
   end
 

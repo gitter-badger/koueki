@@ -1,5 +1,6 @@
 %{
   "bureaucrat": {:hex, :bureaucrat, "0.2.5", "7b6f607fb731bdb6ef43a71b777034f5b3da78c63f510190acf499d0afff2b9a", [:mix], [{:inflex, ">= 1.10.0", [hex: :inflex, repo: "hexpm", optional: false]}, {:phoenix, ">= 1.2.0", [hex: :phoenix, repo: "hexpm", optional: true]}, {:plug, ">= 1.0.0", [hex: :plug, repo: "hexpm", optional: false]}, {:poison, "~> 1.5 or ~> 2.0 or ~> 3.0 or ~> 4.0", [hex: :poison, repo: "hexpm", optional: true]}], "hexpm"},
+  "canada": {:hex, :canada, "1.0.2", "040e4c47609b0a67d5773ac1fbe5e99f840cef173d69b739beda7c98453e0770", [:mix], [], "hexpm"},
   "certifi": {:hex, :certifi, "2.4.2", "75424ff0f3baaccfd34b1214184b6ef616d89e420b258bb0a5ea7d7bc628f7f0", [:rebar3], [{:parse_trans, "~>3.3", [hex: :parse_trans, repo: "hexpm", optional: false]}], "hexpm"},
   "combine": {:hex, :combine, "0.10.0", "eff8224eeb56498a2af13011d142c5e7997a80c8f5b97c499f84c841032e429f", [:mix], [], "hexpm"},
   "comeonin": {:hex, :comeonin, "5.0.0", "e87716d3b1c31e56312f6a1545a5548cdc80376cff5025fe3b12be2046934837", [:mix], [], "hexpm"},

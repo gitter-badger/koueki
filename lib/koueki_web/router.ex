@@ -73,7 +73,7 @@ defmodule KouekiWeb.Router do
     pipe_through :authenticated_api
 
     # Event level
-    get "/events", EventsController, :list
+    get "/events", EventsController, :index
     post "/events", EventsController, :create
     get "/events/:id", EventsController, :view
     patch "/events/:id", EventsController, :edit

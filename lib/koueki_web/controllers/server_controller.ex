@@ -10,7 +10,7 @@ defmodule KouekiWeb.ServerController do
 
   alias KouekiWeb.{
     ServerView,
-    Status,
+    ErrorStatus,
     Utils
   }
 
@@ -45,7 +45,7 @@ defmodule KouekiWeb.ServerController do
       |> put_status(201)
       |> json(ServerView.render("server.json", %{server: server}))
     else
-      Status.validation_error(conn, changeset)
+      ErrorStatus.validation_error(conn, changeset)
     end
   end
 end

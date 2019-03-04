@@ -21,7 +21,10 @@ defmodule KouekiWeb.Plugs.SessionCookiePlug do
       conn
     else
       conn
-      |> assign(:user, Repo.one(from user in User, where: user.id == ^user_id, preload: [:org]))
+      |> assign(
+        :user,
+        Repo.one(from user in User, where: user.id == ^user_id, preload: [:org, :role])
+      )
     end
   end
 end

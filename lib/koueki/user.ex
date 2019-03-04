@@ -11,6 +11,7 @@ defmodule Koueki.User do
     field :apikey, :string
 
     belongs_to :org, Koueki.Org
+    belongs_to :role, Koueki.Role
   end
 
   def changeset(struct, params) do

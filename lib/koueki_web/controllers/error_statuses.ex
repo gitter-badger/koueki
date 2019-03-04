@@ -1,4 +1,4 @@
-defmodule KouekiWeb.Status do
+defmodule KouekiWeb.ErrorStatus do
   use KouekiWeb, :controller
 
   def internal_error(conn, message) do
@@ -30,4 +30,12 @@ defmodule KouekiWeb.Status do
     |> put_status(403)
     |> json(%{error: message})
   end
+
+  @doc """
+  Convenience function
+  Pre-fills a permission denied error with "Not allowed"
+  """
+  def not_allowed(conn) do
+    permission_denied(conn, "You're not allowed to do that")
+  end 
 end

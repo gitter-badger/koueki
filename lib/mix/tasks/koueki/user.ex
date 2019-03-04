@@ -2,7 +2,7 @@ defmodule Mix.Tasks.Koueki.User do
   use Mix.Task
 
   alias Mix.Tasks.Koueki.Common
-  alias Koueki.{User, Repo, Org}
+  alias Koueki.{User, Repo, Org, Role}
 
   def run(["new", email | rest]) do
     {options, [], []} =
@@ -10,7 +10,8 @@ defmodule Mix.Tasks.Koueki.User do
         strict: [
           password: :string,
           orgname: :string,
-          orgid: :integer
+          orgid: :integer,
+          roleid: :integer
         ]
       )
 
@@ -41,6 +42,26 @@ defmodule Mix.Tasks.Koueki.User do
         true ->
           Mix.shell().error("Required: either --orgname or --orgid")
           exit({:shutdown, 1})
+      end
+
+    role_id = Keyword.get(options, :roleid)
+
+    role =
+      cond do
+        not is_nil(role_id) ->
+          Mix.shell().info("Using role id #{role_id}")
+          Repo.get(Role, role_id)
+
+        true ->
+          Mix.shell().info("Attempting to use a default role...")
+
+          with %Role{} = role <- Repo.get_by(Role, default: true) do
+            role
+          else
+            _ ->
+              Mix.shell().error("No default role found, please pass --roleid")
+              exit({:shutdown, 1})
+          end
       end
 
     with %Org{} <- org do

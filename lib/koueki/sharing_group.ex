@@ -35,11 +35,12 @@ defmodule Koueki.SharingGroup do
     params
     |> Map.put("org", Map.get(params, "Organisation"))
     |> Map.delete("Organisation")
-    |> Map.put("member_orgs",
-        params
-        |> Map.get("SharingGroupOrg", [])
-        |> Enum.map(fn x -> x["Organisation"] end)
-      )
+    |> Map.put(
+      "member_orgs",
+      params
+      |> Map.get("SharingGroupOrg", [])
+      |> Enum.map(fn x -> x["Organisation"] end)
+    )
     |> Map.delete("SharingGroupOrg")
   end
 
@@ -51,9 +52,12 @@ defmodule Koueki.SharingGroup do
   end
 
   def find_or_create(%{"uuid" => uuid} = params) do
-    with %SharingGroup{} = sharing_group <- Repo.one(
-      from group in SharingGroup, where: group.uuid == ^uuid,
-      preload: [:member_orgs, :org]) do
+    with %SharingGroup{} = sharing_group <-
+           Repo.one(
+             from group in SharingGroup,
+               where: group.uuid == ^uuid,
+               preload: [:member_orgs, :org]
+           ) do
       sharing_group
       |> changeset(params)
     else

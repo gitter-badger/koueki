@@ -2,22 +2,24 @@ defmodule KouekiWeb.EventsController do
   use KouekiWeb, :controller
 
   import Ecto.Query
+  import Canada, only: [can?: 2]
 
   alias Koueki.{
     Event,
     Attribute,
-    Repo
+    Repo,
+    User
   }
 
   alias KouekiWeb.{
     EventView,
-    Status,
+    ErrorStatus,
     Utils,
     AttributeView,
     TagView
   }
 
-  def list(conn, params) do
+  def index(conn, params) do
     page =
       from(event in Event, preload: [:org, :tags, :attributes])
       |> Repo.paginate(
@@ -37,30 +39,37 @@ defmodule KouekiWeb.EventsController do
       conn
       |> json(EventView.render(opts[:as], %{event: event}))
     else
-      _ -> Status.not_found(conn, "Event #{id} not found")
+      _ -> ErrorStatus.not_found(conn, "Event #{id} not found")
     end
   end
 
   def create(conn, %{} = params, opts \\ [as: "event.json"]) do
     user = Utils.get_user(conn)
-    params = Map.put(params, "org", user.org)
+    params = 
+      params
+      |> Map.put("org", user.org)
+      |> Map.put("user_id", user.id)
 
-    event = Event.changeset(%Event{}, params)
+    if user |> can? create(%Event{}) do
+      event = Event.changeset(%Event{}, params)
 
-    if event.valid? do
-      with {:ok, event} <- Repo.insert(event) do
-        event = Event.load_assoc(event)
+      if event.valid? do
+        with {:ok, event} <- Repo.insert(event) do
+          event = Event.load_assoc(event)
 
-        conn
-        |> put_status(201)
-        |> json(EventView.render(opts[:as], %{event: event}))
+          conn
+          |> put_status(201)
+          |> json(EventView.render(opts[:as], %{event: event}))
+        else
+          err ->
+            IO.inspect(err)
+            ErrorStatus.internal_error(conn, "Error inserting event")
+        end
       else
-        err ->
-          IO.inspect(err)
-          Status.internal_error(conn, "Error inserting event")
+        ErrorStatus.validation_error(conn, event)
       end
     else
-      Status.validation_error(conn, event)
+      ErrorStatus.not_allowed(conn)
     end
   end
 
@@ -68,17 +77,22 @@ defmodule KouekiWeb.EventsController do
   The PATCH method - should edit the event in the specified fields
   """
   def edit(conn, %{"id" => id} = params, opts \\ [as: "event.shallow.json"]) do
-    with %Event{} = event <- Event.get_with_preload(id, [:org]) do
-      changeset = Event.edit_changeset(event, params)
+    with %User{} = user <- Utils.get_user(conn),
+         {:query, %Event{} = event} <- {:query, Event.get_with_preload(id, [:org])},
+         {:permissions, true} <- {:permissions, user |> can? edit(event)} do
 
+      changeset = Event.edit_changeset(event, params)
       if changeset.valid? do
         {:ok, event} = Repo.update(changeset)
 
         conn
         |> json(EventView.render(opts[:as], %{event: event}))
       else
-        Status.validation_error(conn, changeset)
+        ErrorStatus.validation_error(conn, changeset)
       end
+    else
+      {:query, nil} -> ErrorStatus.not_found(conn, "Event #{id} not found")
+      {:permissions, false} -> ErrorStatus.not_allowed(conn)
     end
   end
 
@@ -91,8 +105,11 @@ defmodule KouekiWeb.EventsController do
 
   def add_attribute(conn, %{"id" => event_id, "_json" => params}, opts)
       when is_list(params) do
-    with %Event{} <- Repo.get(Event, event_id),
-         {event_id, ""} <- Integer.parse(event_id) do
+
+    with %User{} = user <- Utils.get_user(conn),
+         {:query, %Event{} = event} <- {:query, Repo.get(Event, event_id)},
+         {event_id, ""} <- Integer.parse(event_id),
+         {:permissions, true} <- {:permissions, user |> can? edit(event)} do
       params
       |> Stream.map(&Attribute.changeset(%Attribute{event_id: event_id}, &1))
       |> Enum.split_with(fn %Ecto.Changeset{} = changeset -> changeset.valid? end)
@@ -128,17 +145,18 @@ defmodule KouekiWeb.EventsController do
               )
 
             {:error, _, changeset, _} ->
-              Status.validation_error(conn, changeset)
+              ErrorStatus.validation_error(conn, changeset)
 
             out ->
               IO.inspect(out)
           end
 
         {_, invalid_attributes} ->
-          Status.validation_error(conn, invalid_attributes)
+          ErrorStatus.validation_error(conn, invalid_attributes)
       end
     else
-      _ -> Status.not_found(conn, "Event #{event_id} not found")
+      {:query, nil} -> ErrorStatus.not_found(conn, "Event #{event_id} not found")
+      {:permissions, false} -> ErrorStatus.not_allowed(conn)
     end
   end
 
@@ -146,7 +164,9 @@ defmodule KouekiWeb.EventsController do
     # In the case that we get a single object,
     # We don't want to just return an array by using our other function,
     # we want to return the created object. Luckily this is quite easy.
-    with %Event{} <- Repo.get(Event, event_id) do
+    with %User{} = user <- Utils.get_user(conn),
+         {:query, %Event{} = event} <- {:query, Repo.get(Event, event_id)},
+         {:permissions, true} <- {:permissions, user |> can? edit(event)} do
       changeset = Attribute.changeset(%Attribute{}, params)
 
       if changeset.valid? do
@@ -161,21 +181,27 @@ defmodule KouekiWeb.EventsController do
             )
 
           {:error, changeset} ->
-            Status.validation_error(conn, changeset)
+            ErrorStatus.validation_error(conn, changeset)
         end
       else
-        Status.validation_error(conn, changeset)
+        ErrorStatus.validation_error(conn, changeset)
       end
+    else
+      {:query, nil} -> ErrorStatus.not_found(conn, "Event #{event_id} not found")
+      {:permissions, false} -> ErrorStatus.not_allowed(conn)
     end
   end
 
   def delete(conn, %{"id" => id}) do
-    with %Event{} = event <- Repo.get(Event, id),
-         {:ok, _} <- Repo.delete(event) do
+    with %User{} = user <- Utils.get_user(conn),
+         {:query, %Event{} = event} <- {:query, Repo.get(Event, id)},
+         {:permissions, true} <- {:permissions, user |> can? delete(event)},
+         {:delete, {:ok, _}} <- {:delete, Repo.delete(event)} do
       json(conn, %{deleted: true})
     else
-      nil -> Status.not_found(conn, "Event #{id} not found")
-      e -> IO.inspect(e)
+      {:query, nil} -> ErrorStatus.not_found(conn, "Event #{id} not found")
+      {:permissions, false} -> ErrorStatus.not_allowed(conn)
+      {:delete, _} -> ErrorStatus.internal_error(conn, "Error deleting event")
     end
   end
 
@@ -203,7 +229,10 @@ defmodule KouekiWeb.EventsController do
 
   def add_tag(conn, %{"event_id" => id, "_json" => params}) do
     # Add multiple tags
-    with %Event{} = event <- Event.get_with_preload(id, [:tags]) do
+    with %User{} = user <- Utils.get_user(conn),
+         {:query, %Event{} = event} <- {:query, Event.get_with_preload(id, [:tags])},
+         {:permissions, true} <- {:permissions, user |> can? tag(event)} do
+
       changeset = Event.add_tags_changeset(event, %{tags: params})
 
       if changeset.valid? do
@@ -213,16 +242,19 @@ defmodule KouekiWeb.EventsController do
         |> put_status(201)
         |> json(TagView.render("tags.json", %{tags: event.tags}))
       else
-        Status.validation_error(conn, changeset)
+        ErrorStatus.validation_error(conn, changeset)
       end
     else
-      _ -> Status.not_found(conn, "Event #{id} not found")
+      {:query, nil} -> ErrorStatus.not_found(conn, "Event #{id} not found")
+      {:permissions, false} -> ErrorStatus.not_allowed(conn)
     end
   end
 
   def add_tag(conn, %{"event_id" => id} = params) do
     # One tag only
-    with %Event{} = event <- Event.get_with_preload(id, [:tags]) do
+    with %User{} = user <- Utils.get_user(conn),
+         {:query, %Event{} = event} <- {:query, Event.get_with_preload(id, [:tags])},
+         {:permissions, true} <- {:permissions, user |> can? tag(event)} do
       changeset = Event.add_tags_changeset(event, %{tags: [params]})
 
       if changeset.valid? do
@@ -232,8 +264,11 @@ defmodule KouekiWeb.EventsController do
         |> put_status(201)
         |> json(TagView.render("tag.json", %{tag: List.last(event.tags)}))
       else
-        Status.validation_error(conn, changeset)
+        ErrorStatus.validation_error(conn, changeset)
       end
+    else
+      {:query, nil} -> ErrorStatus.not_found(conn, "Event #{id} not found")
+      {:permissions, false} -> ErrorStatus.not_allowed(conn)
     end
   end
 end

@@ -2,7 +2,7 @@ defmodule KouekiWeb.TagController do
   use KouekiWeb, :controller
 
   alias KouekiWeb.{
-    Status,
+    ErrorStatus,
     TagView
   }
 
@@ -16,7 +16,7 @@ defmodule KouekiWeb.TagController do
       conn
       |> json(TagView.render(render_as, %{tag: tag}))
     else
-      _ -> Status.not_found(conn, "Tag #{id} not found")
+      _ -> ErrorStatus.not_found(conn, "Tag #{id} not found")
     end
   end
 
@@ -29,10 +29,10 @@ defmodule KouekiWeb.TagController do
         |> put_status(201)
         |> json(TagView.render(render_as, %{tag: tag}))
       else
-        {:error, tag} -> Status.validation_error(conn, tag)
+        {:error, tag} -> ErrorStatus.validation_error(conn, tag)
       end
     else
-      Status.validation_error(conn, tag)
+      ErrorStatus.validation_error(conn, tag)
     end
   end
 

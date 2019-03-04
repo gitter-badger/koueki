@@ -10,7 +10,7 @@ defmodule Koueki.Event do
     Tag,
     Repo,
     Org,
-    User, 
+    User,
     SharingGroup
   }
 
@@ -32,6 +32,7 @@ defmodule Koueki.Event do
 
     belongs_to :org, Koueki.Org
     belongs_to :sharing_group, Koueki.SharingGroup
+    belongs_to :user, Koueki.User
     has_many :attributes, Koueki.Attribute, on_replace: :delete
     many_to_many :tags, Koueki.Tag, join_through: "event_tags"
   end
@@ -158,16 +159,20 @@ defmodule Koueki.Event do
       0 ->
         # This organisation only
         event.org_id == user.org_id
+
       1 ->
         # This community only (i.e on this instance)
         true
+
       2 ->
         # Connected communities
         # If you're on this instance you're connected to our community, 常考
         true
+
       3 ->
         # All communities (duh)
         true
+
       4 ->
         # Member of sharing group
         # FUGG

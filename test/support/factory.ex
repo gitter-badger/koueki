@@ -3,12 +3,14 @@ defmodule Koueki.Factory do
 
   def user_factory do
     org = insert(:org)
+    role = insert(:role)
 
     %Koueki.User{
       email: "user@domain.com",
       apikey: "test",
       password_hash: Pbkdf2.hash_pwd_salt("password"),
-      org: org
+      org: org,
+      role: role
     }
   end
 
@@ -31,6 +33,16 @@ defmodule Koueki.Factory do
   def tag_factory do
     %Koueki.Tag{
       name: sequence(:name, &"Taggo #{&1}")
+    }
+  end
+
+  def role_factory do
+    %Koueki.Role{
+      name: sequence(:name, &"Role #{&1}"),
+      is_org_admin: false,
+      is_global_admin: true,
+      can_modify_org_events: false,
+      can_modify_own_events: false
     }
   end
 end

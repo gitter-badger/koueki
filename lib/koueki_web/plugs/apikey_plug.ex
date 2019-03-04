@@ -14,7 +14,7 @@ defmodule KouekiWeb.Plugs.APIKeyPlug do
   def call(conn, _) do
     with [auth_header] <- get_req_header(conn, "authorization"),
          %User{} = user <-
-           Repo.one(from user in User, where: user.apikey == ^auth_header, preload: [:org]) do
+           Repo.one(from user in User, where: user.apikey == ^auth_header, preload: [:org, :role]) do
       conn
       |> assign(:user, user)
     else
