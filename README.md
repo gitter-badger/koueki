@@ -31,4 +31,5 @@ and nothing more.
 
 You can either set up Koueki as a docker service or as a bare process on a server
 
-Both are listed in [BUILDING.md](./documentation/BUILDING.md)
+All documentation is contained within [the Koueki Wiki](./wiki), follow the instructions
+there to get everything set up.
