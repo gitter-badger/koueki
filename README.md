@@ -31,5 +31,5 @@ and nothing more.
 
 You can either set up Koueki as a docker service or as a bare process on a server
 
-All documentation is contained within [the Koueki Wiki](./wiki), follow the instructions
+All documentation is contained within [the Koueki Wiki](https://github.com/FloatingGhost/koueki/wiki), follow the instructions
 there to get everything set up.
